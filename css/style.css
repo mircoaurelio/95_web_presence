@@ -1,0 +1,937 @@
+/* ============================================================
+   NINETYFIVE — House of Butter Burgers
+   Foglio di stile principale
+   ============================================================ */
+
+/* ---------- Design tokens (dal Figma) ---------- */
+:root {
+  --black:      #383838;
+  --sunny-road: #E2451C; /* rosso/arancio */
+  --burro:      #FFF9E9; /* crema */
+  --blue-diner: #81D3B9; /* menta */
+  --butter:     #F7EABE; /* giallo pallido */
+
+  --page-max: 1512px;    /* larghezza del mockup Figma */
+
+  --font-nav:     "Jost", sans-serif;
+  --font-script:  "Yellowtail", cursive;
+  --font-display: "Fraunces", Georgia, serif; /* stand-in di "Wonder" */
+  --font-body:    "Raleway", sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--burro);
+  color: var(--black);
+  font-family: var(--font-nav);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;          /* i francobolli possono sbordare ai lati senza barre di scorrimento */
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* Contenitore centrato alla larghezza del mockup.
+   NB: main NON è vincolato → le sezioni colorate (burger, fries, location,
+   nastri) restano a tutta larghezza; ogni sezione centra da sé il contenuto. */
+.site-header,
+.hero,
+.about {
+  max-width: var(--page-max);
+  margin-inline: auto;
+}
+
+/* ============================================================
+   PARTE ALTA + STICKERS
+   ============================================================ */
+.top-wrap {
+  position: relative;
+  padding-bottom: 80px;
+}
+/* hero e about sopra ai francobolli */
+.top-wrap .hero,
+.top-wrap .about { position: relative; z-index: 2; }
+
+.stickers {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1619px;               /* stesso spazio del layer Figma */
+  transform: translateX(-50%);
+  z-index: 1;                  /* dietro ai testi */
+  pointer-events: none;
+}
+.sticker {
+  position: absolute;
+  height: auto;
+  transform: rotate(var(--rot, 0deg));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .1));
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: transparent;      /* header trasparente: i contenuti scorrono dietro */
+  padding: 24px 24px 0;         /* pt-24 px-24 (Figma 67:909) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  width: 100%;
+  border: 2px solid var(--black);
+}
+.nav__item {
+  flex: 0 0 auto;               /* About/Contacts: larghezza sul contenuto (Figma shrink-0) */
+  padding: 12px 120px;          /* px-120 py-12 (Figma 67:909) */
+  background: var(--burro);
+  color: var(--sunny-road);
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background .2s ease, color .2s ease;
+}
+/* la voce centrale (Menù) si allarga a riempire lo spazio (Figma flex-1) */
+.nav__item:nth-child(2) { flex: 1 1 0; min-width: 0; }
+/* separatori verticali tra le voci */
+.nav__item + .nav__item { border-left: 2px solid var(--black); }
+.nav__item:hover { background: var(--sunny-road); color: var(--burro); }
+
+.nav__logo {
+  margin-top: -2px;            /* 95 agganciato alla barra: compensa lo spazio trasparente in cima all'SVG */
+  display: block;
+  line-height: 0;
+}
+.nav__logo img { width: 72px; height: auto; }
+
+/* ============================================================
+   HERO — titolo animato
+   ============================================================ */
+.hero {
+  padding: 64px 24px 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;                       /* Figma: le due righe (72+120) riempiono i 192px senza spazio */
+}
+.hero__script {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: 60px;
+  line-height: 1.2;
+  color: var(--sunny-road);
+}
+.hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 120px;
+  line-height: 1;
+  color: var(--black);
+  min-height: 1em;
+}
+.hero__rotator {
+  display: inline-block;
+  transition: opacity .35s ease, transform .35s ease;
+}
+.hero__rotator.is-out {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about {
+  padding: 24px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  text-align: center;
+}
+.about__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 840px;
+}
+.about__text p {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--black);
+}
+.about__wordmark { width: 180px; height: auto; }
+
+/* ============================================================
+   FOTO DINER
+   ============================================================ */
+.diner {
+  padding: 24px 24px 40px;
+  display: flex;
+  justify-content: center;
+}
+.diner__frame {
+  position: relative;
+  width: 720px;
+  max-width: 100%;
+}
+.diner__photo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+/* plate rosso "Butter Burger Original" (sticker-13) che sborda in alto a sinistra — Figma 95T13 */
+.diner__seal {
+  position: absolute;
+  left: -114px;
+  top: -93px;
+  width: 179px;
+  height: auto;
+  transform: rotate(-8deg);
+  z-index: 2;
+}
+/* ovale giallo "Ninety-five" (sticker-03) che sborda a destra — Figma 95T3 */
+.diner__oval {
+  position: absolute;
+  right: -46px;
+  top: 27%;
+  width: 147px;
+  height: auto;
+  transform: rotate(-6deg);
+  z-index: 2;
+}
+
+/* ============================================================
+   MENU INTRO — barra info
+   ============================================================ */
+.menu-intro {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 24px;
+}
+.infobar {
+  display: flex;
+  border: 2px solid var(--black);
+}
+.infobar__cell {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 24px 40px;
+  background: var(--burro);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+.infobar__cell--delivery {
+  flex: 0 0 488px;
+  background: var(--sunny-road);
+  border-left: 2px solid var(--black);
+  border-right: 2px solid var(--black);
+}
+.infobar__title {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--sunny-road);
+}
+.infobar__title--light { color: var(--burro); }
+.infobar__text {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--black);
+}
+.infobar__icons {
+  display: flex;
+  gap: 48px;
+  align-items: center;
+}
+.infobar__icons img { height: 48px; width: auto; }
+
+/* ============================================================
+   MARQUEE — nastri scorrevoli
+   ============================================================ */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 18px 0;              /* Figma: 8px banda + 2px riga + 8px interno */
+}
+/* le due righe di bordo, rientrate di 8px dai bordi della banda (Figma) */
+.marquee::before,
+.marquee::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+.marquee::before { top: 8px; }
+.marquee::after  { bottom: 8px; }
+.marquee--mint {
+  background: var(--blue-diner);
+  margin-bottom: 24px;         /* gap crema mint→rosso (Figma Menu_Intro) */
+}
+.marquee--mint::before,
+.marquee--mint::after { background: var(--black); }
+.marquee--red  { background: var(--sunny-road); }
+/* gap crema rosso→burger (solo B2, non il nastro Combo Menu) */
+.marquee--red:not(.marquee--combo) { margin-bottom: 24px; }
+.marquee--red::before,
+.marquee--red::after { background: var(--butter); }
+.marquee__track {
+  display: inline-flex;
+  will-change: transform;
+  animation: marquee-left 28s linear infinite;
+}
+.marquee__track--reverse { animation-name: marquee-right; }
+.marquee__group {
+  font-family: var(--font-script);
+  font-size: 36px;
+  line-height: 1.2;
+  color: var(--black);
+  padding: 0;
+}
+.marquee--red .marquee__group { color: var(--butter); }
+
+@keyframes marquee-left  { from { transform: translateX(0); }     to { transform: translateX(-50%); } }
+@keyframes marquee-right { from { transform: translateX(-50%); }  to { transform: translateX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+}
+
+/* ============================================================
+   BURGER SHOWCASE — scontrino + burger + bolli
+   ============================================================ */
+.burger-showcase {
+  position: relative;
+  overflow: hidden;
+  border-top: 2px solid var(--black);
+  cursor: pointer;
+  transition: background-color .5s ease;
+  user-select: none;
+}
+/* sfondo colorato per stato attivo */
+.burger-showcase--butter { background: var(--butter); }
+.burger-showcase--bacon  { background: var(--sunny-road); }
+.burger-showcase--cheese { background: var(--blue-diner); }
+.burger-showcase--fries  { background: var(--black); }
+/* texture "Ninety-five": marcata su butter, leggera sugli altri */
+.burger-showcase::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/texture-95.png") center / cover;
+  opacity: .5;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+.burger-showcase--bacon::before,
+.burger-showcase--cheese::before { opacity: .5; mix-blend-mode: multiply; }
+.burger-showcase--fries::before { opacity: .14; filter: invert(1); }
+
+.burger-stage {
+  position: relative;
+  width: 1512px;
+  max-width: 100%;
+  height: 982px;
+  margin-inline: auto;
+}
+
+/* ---- Stack scontrini (si impilano al click) ---- */
+.receipt-stack {
+  position: absolute;
+  left: 110px;
+  top: 92px;
+  width: 489px;
+  height: 800px;
+}
+
+/* ---- Scontrino ---- */
+.receipt {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 489px;
+  padding: 48px 24px;
+  transform-origin: center center;
+  transform: translate(var(--dx, 0), calc(var(--dy, 0px) - 44px)) rotate(var(--rot, 3deg));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease, transform .45s cubic-bezier(.2, .8, .2, 1);
+  background: url("../assets/receipt-paper.png") center / cover no-repeat, #f3efe4;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, .3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  color: var(--black);
+}
+/* scontrino in posa (visibile nello stack) */
+.receipt.is-shown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--rot, 3deg));
+}
+.receipt__wordmark { width: 180px; height: 36px; }  /* Figma 180×36; height esplicita per non far collassare l'SVG al default 150px */
+.receipt__addr {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+}
+.receipt__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 60px;
+  line-height: 1;
+  text-align: center;
+}
+.receipt__stars {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-nav);
+  font-size: 18px;
+  line-height: 1;
+  text-align: center;
+  color: var(--black);
+  height: 12px;
+}
+.receipt__list {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 18px;
+  line-height: 1;              /* Figma: leading-none */
+}
+.receipt__list > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.receipt__list dt {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  text-align: left;
+}
+.receipt__list dd {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-weight: 400;
+  text-align: right;
+}
+.receipt__total {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+}
+.receipt__price {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+}
+.receipt__price sup {
+  font-size: .5em;
+  vertical-align: super;
+}
+.receipt__order {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 18px;
+  letter-spacing: .08em;
+  text-align: center;
+}
+.receipt__note {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-align: center;
+}
+.receipt__foot {
+  text-align: center;
+  font-family: var(--font-nav);
+  font-size: 12px;
+  line-height: 1.2;
+}
+.receipt__foot p { margin: 0; }
+.receipt__foot-bold { font-weight: 700; }
+.receipt__tag {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: 36px;
+  line-height: 1;
+  color: var(--sunny-road);
+}
+
+/* ---- Lato destro: bottone + bolli + burger ---- */
+.burger-btn-slot {
+  position: absolute;
+  top: 66px;
+  right: 150px;
+  width: 370px;
+  z-index: 6;
+}
+.burger-btn {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform .25s ease;
+}
+.burger-btn:hover { transform: scale(1.08); }
+.burger-btn img { width: 100%; height: auto; grid-area: 1 / 1; }
+.burger-btn__text {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 38.4px;           /* Figma 189:1046 */
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--burro);
+  text-align: center;
+}
+.burger-btn__text small {
+  font-size: 19.2px;           /* Figma 189:1047 */
+  color: var(--butter);
+}
+/* ORDER NOW: targhetta crema, testo rosso */
+.burger-btn--order .burger-btn__text--order { color: var(--sunny-road); }
+.burger-seal {
+  position: absolute;
+  left: 762px;                 /* Figma 134:351: centro bollo (882,409), 240px, -15° */
+  top: 289px;
+  width: 240px;
+  height: auto;
+  transform: rotate(-15deg);
+  z-index: 5;
+}
+.burger-seal[hidden] { display: none; }
+.burger-photo {
+  position: absolute;
+  right: 60px;
+  bottom: 40px;
+  width: 640px;
+  height: auto;
+  z-index: 1;
+}
+
+/* ============================================================
+   FRIES / DRINKS — sezione scura
+   ============================================================ */
+.fries-drinks {
+  position: relative;
+  background: var(--black);
+  overflow: hidden;
+  padding: 48px 24px;
+}
+.fries-drinks::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/texture-95.png") center / cover;
+  opacity: .07;
+  pointer-events: none;
+}
+.fries-drinks__inner {
+  position: relative;
+  max-width: 651px;            /* Figma menu 156:75766 */
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.fries-drinks__title {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: 60px;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--butter);
+}
+.dark-stars {
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-nav);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--butter);
+  height: 12px;
+}
+.priceline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 36px;
+}
+.priceline__label { display: flex; flex-direction: column; gap: 2px; }
+.priceline__name {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--butter);
+}
+.priceline__sub {
+  font-family: var(--font-nav);
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--butter);
+  opacity: .5;
+}
+.price {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--burro);
+  white-space: nowrap;
+}
+.price sup { font-size: .5em; vertical-align: super; }
+
+/* ============================================================
+   COMBO MENU
+   ============================================================ */
+.marquee--combo { margin: 24px 0; }  /* Figma B3: 24px crema sopra/sotto la banda (py-24) */
+.combo-heading {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 96px;
+  color: var(--butter);
+  line-height: 1;
+}
+
+.combo {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.combo__bar {
+  width: 100%;
+  background: var(--burro);
+  border: 2px solid var(--black);
+  padding: 24px 48px;
+  text-align: center;
+}
+.combo__bar p { margin: 0; }
+.combo__bar > p {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: var(--black);
+}
+.combo__grid {
+  width: 100%;
+  display: flex;
+  border: 2px solid var(--black);
+  border-top: 0;
+}
+.combo__col {
+  flex: 1 1 0;
+  min-width: 0;
+  background: var(--burro);
+  padding: 24px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+.combo__col + .combo__col { border-left: 2px solid var(--black); }
+.combo__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  color: var(--black);
+  text-align: center;
+}
+.combo__name {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 24px;
+  text-transform: uppercase;
+}
+.combo__label {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 24px;
+}
+.combo__photo { width: 240px; height: auto; }
+.combo__price {
+  position: absolute;
+  bottom: 0;                    /* base piatta allineata al fondo colonna */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 144px;
+  height: 72px;
+  background: var(--black);
+  border-radius: 999px 999px 0 0;  /* Figma: arco in alto, base piatta in basso */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--burro);
+}
+.combo__price sup { font-size: .5em; vertical-align: super; }
+
+.combo__bar--make {
+  border-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.combo__make {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 36px;
+  color: var(--black);
+}
+.combo__swap {
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 24px;
+  text-transform: uppercase;
+  color: var(--black);
+}
+.combo__swap span { color: var(--sunny-road); }
+
+/* ---- Combo: interazioni hover (colore diverso per opzione) ---- */
+.combo__col { transition: background .2s ease, color .2s ease; }
+.combo__col:nth-child(1):hover { background: var(--blue-diner); }   /* Cheese → azzurro */
+.combo__col:nth-child(2):hover { background: var(--butter); }       /* Butter → giallo */
+.combo__col:nth-child(3):hover { background: var(--sunny-road); }   /* Bacon → rosso */
+/* su rosso il testo diventa crema per leggibilità */
+.combo__col:nth-child(3):hover .combo__head { color: var(--burro); }
+
+.combo__price-up { display: none; }
+.combo.is-upgraded .combo__price-base { display: none; }
+.combo.is-upgraded .combo__price-up { display: inline; }
+
+.combo__bar--make { transition: background .2s ease, color .2s ease; }
+.combo.is-upgraded .combo__bar--make { background: var(--black); }
+.combo.is-upgraded .combo__make { color: var(--burro); }
+.combo.is-upgraded .combo__swap { color: var(--burro); }
+.combo.is-upgraded .combo__swap span { color: var(--butter); }
+
+/* ============================================================
+   LOCATION — Your 95 stop in Milan
+   ============================================================ */
+.location {
+  position: relative;
+  background: linear-gradient(to bottom,
+    var(--burro) 0, var(--burro) 250px,
+    var(--sunny-road) 250px, var(--sunny-road) 100%);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.location__title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 1;
+  color: var(--sunny-road);
+}
+.location__95 { width: 76px; height: 44px; }  /* dimensioni esplicite: l'SVG (preserveAspectRatio none) altrimenti si stira a 300px */
+
+.location__photos {
+  position: relative;
+  width: 1440px;
+  max-width: 100%;
+  height: 480px;
+}
+.location__photo {
+  position: absolute;
+  top: 50%;
+  /* niente ombra/bordo: le foto "restored" hanno già la cornice di carta (Figma senza shadow) */
+}
+.location__photo--main  { width: 640px; left: 50%; transform: translate(-50%, -50%); z-index: 3; }
+.location__photo--left  { width: 480px; left: 40px;  transform: translateY(-50%) rotate(-5deg); z-index: 1; }
+.location__photo--right { width: 480px; right: 40px; transform: translateY(-50%) rotate(5deg);  z-index: 2; }
+
+.location__info {
+  width: min(700px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.location__addr {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: 48px;
+  line-height: 1.2;
+  color: var(--butter);
+  text-align: center;
+}
+.location__hours {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  font-family: var(--font-nav);
+  font-size: 18px;
+  color: var(--butter);
+}
+.location__hours .b { font-weight: 700; text-transform: uppercase; }
+.light-stars {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-nav);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--burro);
+  text-align: center;
+  height: 12px;
+}
+.location__transit {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 18px;
+  color: var(--butter);
+}
+.location__transit > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.location__transit dt { font-family: var(--font-nav); font-weight: 700; text-transform: uppercase; }
+.location__transit dd { margin: 0; font-family: var(--font-nav); font-weight: 400; text-align: right; }
+.location__btn {
+  width: 100%;
+  background: var(--butter);
+  color: var(--sunny-road);
+  text-align: center;
+  padding: 12px;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: opacity .2s ease;
+}
+.location__btn:hover { opacity: .85; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--black);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 36px 48px 48px;
+}
+.footer__col { flex: 1 1 0; min-width: 0; }
+.footer__col--left  { text-align: left; }
+.footer__col--right { text-align: right; }
+.footer__col--center {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.footer__line {
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--butter);
+}
+.footer__line a { text-decoration: underline; }
+.footer__logo { height: 96px; width: auto; }
+.footer__social { display: flex; gap: 16px; align-items: center; }
+.footer__social img { width: 24px; height: 24px; }
+.footer__btn {
+  border: 2px solid var(--butter);
+  color: var(--butter);
+  padding: 12px 96px;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  transition: background .2s ease, color .2s ease;
+}
+.footer__btn:hover { background: var(--butter); color: var(--black); }
+
+/* ============================================================
+   RESPONSIVE (bozza — la rifiniamo dopo il desktop)
+   ============================================================ */
+@media (max-width: 900px) {
+  .hero__script { font-size: 40px; }
+  .hero__title  { font-size: 64px; }
+  .nav__item    { padding: 12px 8px; font-size: 13px; }
+}

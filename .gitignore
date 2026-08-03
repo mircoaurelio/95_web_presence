@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# Config locale di Claude Code / dev server (non serve online)
+.claude/
