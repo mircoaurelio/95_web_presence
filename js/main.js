@@ -44,6 +44,16 @@
   const combo = document.querySelector(".combo");
   const makeBar = document.querySelector(".combo__bar--make");
   if (!combo || !makeBar) return;
+
+  // Su touch non esiste hover: la barra diventa un interruttore da toccare.
+  if (window.matchMedia("(hover: none)").matches) {
+    makeBar.setAttribute("role", "button");
+    makeBar.setAttribute("tabindex", "0");
+    makeBar.style.cursor = "pointer";
+    makeBar.addEventListener("click", () => combo.classList.toggle("is-upgraded"));
+    return;
+  }
+
   makeBar.addEventListener("mouseenter", () => combo.classList.add("is-upgraded"));
   makeBar.addEventListener("mouseleave", () => combo.classList.remove("is-upgraded"));
 })();

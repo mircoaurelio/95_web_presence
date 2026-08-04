@@ -59,6 +59,7 @@ a { text-decoration: none; color: inherit; }
   top: 0;
   left: 50%;
   width: 1619px;               /* stesso spazio del layer Figma */
+  height: 100%;                /* serve alle fasce ridotte, che ancorano al bottom */
   transform: translateX(-50%);
   z-index: 1;                  /* dietro ai testi */
   pointer-events: none;
@@ -928,10 +929,320 @@ a { text-decoration: none; color: inherit; }
 .footer__btn:hover { background: var(--butter); color: var(--black); }
 
 /* ============================================================
-   RESPONSIVE (bozza — la rifiniamo dopo il desktop)
+   RESPONSIVE
+   Tre fasce:
+   - ≤1200px  laptop stretti: si comprimono le spaziature fisse
+   - ≤900px   tablet: le griglie a 3 colonne diventano più strette
+   - ≤767px   mobile: tutto in colonna, i blocchi a posizione assoluta
+              (stickers, palco burger, foto location) tornano nel flusso
    ============================================================ */
+
+/* ---------- ≤1200px — laptop stretti ---------- */
+@media (max-width: 1200px) {
+  .nav__item { padding: 12px 40px; }
+
+  /* a 120px il titolo arriverebbe a sfiorare i francobolli laterali */
+  .hero__script { font-size: 48px; }
+  .hero__title  { font-size: 80px; }
+
+  /* ---- Francobolli ----
+     La composizione Figma (10 pezzi su una fascia da 1619px centrata) tiene
+     solo a 1512px: la colonna di testo è larga al massimo 840px e centrata,
+     quindi appena la pagina si stringe i francobolli dei margini le finiscono
+     addosso — scalare o restringere il contenitore non lo evita. Sotto i
+     1200px se ne tengono quindi 4, ancorati ai bordi della viewport e per metà
+     fuori campo: restano decorativi e non toccano mai il testo.
+     La coppia bassa è ancorata al `bottom` del top-wrap perché la sua distanza
+     dall'alto cambia con quanto va a capo il testo about. */
+  .stickers {
+    width: 100%;
+    left: 0;
+    transform: none;
+  }
+  .sticker { display: none !important; }
+  .sticker:nth-child(1) { display: block !important; left: -30px !important;             top: 90px !important;  width: 150px !important; }
+  .sticker:nth-child(3) { display: block !important; left: calc(100% - 118px) !important; top: 70px !important;  width: 152px !important; }
+  .sticker:nth-child(4) { display: block !important; left: -34px !important;             top: auto !important; bottom: 8px !important;  width: 140px !important; }
+  .sticker:nth-child(6) { display: block !important; left: calc(100% - 104px) !important; top: auto !important; bottom: 24px !important; width: 144px !important; }
+
+  .infobar__cell--delivery { flex: 0 0 34%; }
+
+  /* La cornice diner è larga 720px fissi: man mano che i margini laterali si
+     assottigliano, il piatto e l'ovale (che sbordano di proposito) finirebbero
+     fuori schermo. Si rientrano per fascia. */
+  .diner__seal { left: -70px; top: -60px; width: 150px; }
+  .diner__oval { right: -34px; width: 130px; }
+
+  .location__photos { height: 420px; }
+  .location__photo--main  { width: 46%; }
+  .location__photo--left,
+  .location__photo--right { width: 34%; }
+}
+
+/* ---------- 768px–1511px — palco burger scalato ----------
+   I figli del palco hanno coordinate assolute sulla griglia 1512×982 del
+   Figma: invece di ricomporli, sotto i 1512px si scala il palco intero.
+   - origin `top left` con il palco ancorato a sinistra: con width:1512px in un
+     contenitore più stretto i margini auto collassano a 0, quindi `top center`
+     scalerebbe attorno a un centro che non è quello del contenitore.
+   - cqw invece di vw: vw include la scrollbar e taglierebbe il bordo destro.
+   - aspect-ratio sul contenitore: il transform non tocca il layout, quindi
+     l'altezza visiva la deve dichiarare .burger-showcase. */
+@media (min-width: 768px) and (max-width: 1511px) {
+  .burger-showcase {
+    container-type: inline-size;
+    aspect-ratio: 1512 / 982;
+    height: auto;
+  }
+  .burger-stage {
+    width: 1512px;
+    max-width: none;
+    margin-inline: 0;
+    transform-origin: top left;
+    transform: scale(calc(100cqw / 1512px));
+  }
+}
+
+/* ---------- ≤900px — tablet ---------- */
 @media (max-width: 900px) {
   .hero__script { font-size: 40px; }
   .hero__title  { font-size: 64px; }
-  .nav__item    { padding: 12px 8px; font-size: 13px; }
+  .nav__item    { padding: 12px 16px; font-size: 14px; }
+
+  .about__text p { font-size: 20px; }
+
+  .diner__seal { left: -34px; top: -50px; width: 120px; }
+  .diner__oval { right: -26px; width: 108px; }
+
+  .infobar__cell { padding: 20px 16px; }
+  .infobar__title, .infobar__text { font-size: 18px; }
+  .infobar__icons { gap: 24px; }
+  .infobar__icons img { height: 36px; }
+
+  .combo-heading { font-size: 64px; }
+  .combo__photo { width: 180px; }
+  .combo__make  { font-size: 26px; }
+  .combo__swap  { font-size: 18px; }
+  .combo__name, .combo__label { font-size: 20px; }
+
+  .fries-drinks__title { font-size: 44px; }
+  .priceline__name { font-size: 26px; }
+  .price { font-size: 28px; }
+
+  .location__title { font-size: 44px; }
+  .location__95 { width: 56px; height: 32px; }
+
+  .footer__btn { padding: 12px 48px; }
+}
+
+/* ============================================================
+   ≤767px — MOBILE
+   ============================================================ */
+@media (max-width: 767px) {
+
+  /* ---- Header / nav ---- */
+  .site-header { padding: 12px 12px 0; }
+  .nav__item {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 4px;
+    font-size: 11px;
+    letter-spacing: .01em;
+  }
+  .nav__logo img { width: 56px; }
+
+  /* ---- Francobolli ----
+     Stessa logica della fascia ≤1200px, con misure da telefono: la coppia alta
+     fiancheggia il titolo hero, quella bassa sta nelle tasche vuote ai lati del
+     wordmark (ancorata al bottom, così non dipende da quanto va a capo l'about). */
+  .sticker:nth-child(1) { left: -60px !important;             top: 78px !important; width: 96px !important; }
+  .sticker:nth-child(3) { left: calc(100% - 40px) !important; top: 60px !important; width: 100px !important; }
+  .sticker:nth-child(4) { left: -46px !important; top: auto !important; bottom: 6px !important;  width: 92px !important; }
+  .sticker:nth-child(6) { left: calc(100% - 44px) !important; top: auto !important; bottom: 20px !important; width: 96px !important; }
+
+  .top-wrap { padding-bottom: 24px; }
+
+  /* ---- Hero ---- */
+  .hero { padding: 44px 16px 32px; }
+  .hero__script { font-size: 32px; }
+  .hero__title  { font-size: 44px; line-height: 1.05; }
+
+  /* ---- About ---- */
+  .about { padding: 16px 16px 40px; gap: 28px; }
+  .about__text { gap: 14px; }
+  .about__text p { font-size: 16px; line-height: 1.35; }
+  .about__wordmark { width: 140px; }
+
+  /* ---- Foto diner ---- */
+  .diner { padding: 8px 16px 32px; }
+  .diner__seal { left: -18px; top: -34px; width: 92px; }
+  .diner__oval { right: -14px; top: 24%; width: 76px; }
+
+  /* ---- Barra info: da 3 colonne a 3 righe ---- */
+  .menu-intro { padding: 16px; }
+  .infobar { flex-direction: column; }
+  .infobar__cell { padding: 18px 16px; gap: 8px; }
+  .infobar__cell--delivery {
+    flex: 0 0 auto;
+    border-left: 0;
+    border-right: 0;
+    border-top: 2px solid var(--black);
+    border-bottom: 2px solid var(--black);
+  }
+  .infobar__title, .infobar__text { font-size: 18px; }
+  .infobar__icons img { height: 32px; }
+
+  /* ---- Nastri scorrevoli ---- */
+  .marquee { padding: 12px 0; }
+  .marquee::before { top: 5px; }
+  .marquee::after  { bottom: 5px; }
+  .marquee__group { font-size: 22px; }
+
+  /* ---- Burger showcase ----
+     Sul desktop è un palco 1512×982 con figli in position:absolute.
+     Su mobile il palco torna a flusso verticale: badge → panino → bottone →
+     scontrini. Niente più scale(): a queste larghezze rimpicciolirebbe
+     i testi degli scontrini fino a renderli illeggibili. */
+  .burger-stage {
+    transform: none;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 16px 36px;
+  }
+  .burger-seal {
+    position: static;
+    order: 1;
+    width: 150px;
+    transform: rotate(-8deg);
+  }
+  .burger-photo {
+    position: static;
+    order: 2;
+    width: min(300px, 88%);
+  }
+  .burger-btn-slot {
+    position: static;
+    order: 3;
+    width: min(260px, 76%);
+  }
+  .burger-btn__text { font-size: 26px; }
+  .burger-btn__text small { font-size: 13px; }
+
+  /* Gli scontrini restano sovrapposti, ma in una griglia 1×1:
+     la griglia si dimensiona sullo scontrino più alto, così lo stack
+     non ha più bisogno di un'altezza fissa. */
+  .receipt-stack {
+    position: static;
+    order: 4;
+    display: grid;
+    /* minmax(0,1fr): senza, la traccia implicita è `auto` e si allarga
+       al min-content dello scontrino, sfondando la larghezza dello stack */
+    grid-template-columns: minmax(0, 1fr);
+    width: min(330px, 94%);
+    height: auto;
+  }
+  .receipt {
+    position: relative;
+    grid-area: 1 / 1;
+    min-width: 0;
+    left: auto;
+    top: auto;
+    width: 100%;
+    padding: 26px 16px;
+    gap: 12px;
+    /* offset e rotazioni dello stack dimezzati: quelli desktop, su uno
+       scontrino alto ~550px, facevano sbordare gli angoli fuori dal palco */
+    transform: translate(calc(var(--dx, 0px) * .5), calc(var(--dy, 0px) * .5 - 30px)) rotate(calc(var(--rot, 3deg) * .5));
+  }
+  .receipt.is-shown {
+    transform: translate(calc(var(--dx, 0px) * .5), calc(var(--dy, 0px) * .5)) rotate(calc(var(--rot, 3deg) * .5));
+  }
+  .receipt__wordmark { width: 132px; height: 27px; }
+  .receipt__title { font-size: 34px; }
+  .receipt__list  { font-size: 13px; gap: 7px; }
+  .receipt__total { font-size: 26px; }
+  .receipt__order { font-size: 14px; }
+  .receipt__tag   { font-size: 26px; }
+  .receipt__stars { font-size: 14px; height: 9px; }
+
+  /* ---- Fries / drinks ---- */
+  .fries-drinks { padding: 32px 16px; }
+  .fries-drinks__title { font-size: 34px; }
+  .priceline { gap: 16px; }
+  .priceline__name { font-size: 19px; line-height: 1.15; }
+  .priceline__sub  { font-size: 12px; }
+  .price { font-size: 24px; }
+
+  /* ---- Combo ---- */
+  .marquee--combo { margin: 16px 0; }
+  .combo-heading { font-size: 40px; }
+  .combo { padding: 16px; }
+  .combo__bar { padding: 16px; }
+  .combo__bar > p { font-size: 17px; }
+  .combo__grid { flex-direction: column; }
+  .combo__col { padding: 20px 16px 56px; }
+  .combo__col + .combo__col {
+    border-left: 0;
+    border-top: 2px solid var(--black);
+  }
+  .combo__name, .combo__label { font-size: 20px; }
+  .combo__photo { width: 170px; }
+  .combo__price { width: 118px; height: 58px; font-size: 28px; }
+  .combo__make { font-size: 22px; }
+  .combo__swap { font-size: 15px; }
+  /* niente hover su touch: l'upgrade prezzi si attiva col tap (vedi main.js) */
+
+  /* ---- Location ---- */
+  .location {
+    padding: 32px 16px;
+    gap: 20px;
+    background: linear-gradient(to bottom,
+      var(--burro) 0, var(--burro) 96px,
+      var(--sunny-road) 96px, var(--sunny-road) 100%);
+  }
+  .location__title { font-size: 28px; gap: 8px; }
+  .location__95 { width: 38px; height: 22px; }
+  /* le tre foto ruotate diventano una sola foto dritta */
+  .location__photos { width: 100%; height: auto; }
+  .location__photo--left,
+  .location__photo--right { display: none; }
+  .location__photo--main {
+    position: static;
+    width: 100%;
+    transform: none;
+  }
+  .location__info { gap: 18px; }
+  .location__addr { font-size: 30px; }
+  .location__hours { gap: 16px; font-size: 15px; }
+  .location__transit { font-size: 14px; gap: 10px; }
+  .location__transit > div { gap: 12px; }
+
+  /* ---- Footer ---- */
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 20px 36px;
+  }
+  .footer__col { flex: 0 0 auto; width: 100%; }
+  .footer__col--left,
+  .footer__col--right { text-align: center; }
+  /* ordine mobile: logo + social + bottone in cima, poi i testi legali */
+  .footer__col--center { order: -1; }
+  .footer__line { font-size: 14px; }
+  .footer__logo { height: 76px; }
+  .footer__btn { padding: 12px 56px; font-size: 13px; }
+}
+
+/* ---------- ≤380px — telefoni piccoli ---------- */
+@media (max-width: 380px) {
+  .nav__item { font-size: 10px; padding: 10px 2px; }
+  .hero__title { font-size: 38px; }
+  .combo-heading { font-size: 34px; }
+  .priceline__name { font-size: 17px; }
+  .location__addr { font-size: 26px; }
 }
