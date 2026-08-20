@@ -50,9 +50,9 @@ a { text-decoration: none; color: inherit; }
   position: relative;
   padding-bottom: 80px;
 }
-/* hero e about sopra ai francobolli */
+/* testi sotto ai francobolli: gli sticker stanno sul layer frontale */
 .top-wrap .hero,
-.top-wrap .about { position: relative; z-index: 2; }
+.top-wrap .about { position: relative; z-index: 1; }
 
 .stickers {
   position: absolute;
@@ -61,14 +61,39 @@ a { text-decoration: none; color: inherit; }
   width: 1619px;               /* stesso spazio del layer Figma */
   height: 100%;                /* serve alle fasce ridotte, che ancorano al bottom */
   transform: translateX(-50%);
-  z-index: 1;                  /* dietro ai testi */
+  z-index: 20;                 /* davanti a hero/about, sotto all'header */
   pointer-events: none;
 }
 .sticker {
   position: absolute;
   height: auto;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  z-index: 20;
+}
+.sticker img {
+  width: 100%;
+  height: auto;
+  display: block;
   transform: rotate(var(--rot, 0deg));
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .1));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .12));
+  animation: sticker-float 3.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * .28s);
+  will-change: translate;
+}
+.sticker.is-dragging { cursor: grabbing; z-index: 30; }
+.sticker.is-dragging img {
+  animation: none;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .28));
+}
+@keyframes sticker-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticker img { animation: none; }
 }
 
 /* ============================================================
@@ -147,11 +172,24 @@ a { text-decoration: none; color: inherit; }
 }
 .hero__rotator {
   display: inline-block;
-  transition: opacity .35s ease, transform .35s ease;
+  white-space: nowrap;
 }
-.hero__rotator.is-out {
-  opacity: 0;
-  transform: translateY(12px);
+.hero__rotator::after {
+  content: "";
+  display: inline-block;
+  width: .08em;
+  height: .82em;
+  margin-left: .08em;
+  background: var(--black);
+  vertical-align: -.04em;
+  animation: caret-blink 1s step-end infinite;
+}
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__rotator::after { animation: none; }
 }
 
 /* ============================================================
@@ -331,15 +369,27 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ============================================================
-   BURGER SHOWCASE — scontrino + burger + bolli
+   BURGER SHOWCASE — palco sticky a tutto schermo
+   Lo scroll nel pin ruota il panino e cambia l'alimento.
+   Finita la rotazione del blocco nero, lo scroll normale riprende.
    ============================================================ */
+.burger-pin {
+  height: 500vh;               /* 1 viewport sticky + 4 stati da 100vh */
+}
 .burger-showcase {
-  position: relative;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   border-top: 2px solid var(--black);
-  cursor: pointer;
   transition: background-color .5s ease;
   user-select: none;
+  container-type: size;
+}
+.burger-carousel {
+  width: 100%;
+  height: 100%;
 }
 /* sfondo colorato per stato attivo */
 .burger-showcase--butter { background: var(--butter); }
@@ -361,11 +411,20 @@ a { text-decoration: none; color: inherit; }
 .burger-showcase--fries::before { opacity: .14; filter: invert(1); }
 
 .burger-stage {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 1512px;
-  max-width: 100%;
   height: 982px;
-  margin-inline: auto;
+  margin: 0;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(min(100vw / 1512px, 100vh / 982px));
+}
+@supports (container-type: size) {
+  .burger-showcase { container-type: size; }
+  .burger-stage {
+    transform: translate(-50%, -50%) scale(min(100cqw / 1512px, 100cqh / 982px));
+  }
 }
 
 /* ---- Stack scontrini (si impilano al click) ---- */
@@ -557,13 +616,24 @@ a { text-decoration: none; color: inherit; }
   z-index: 5;
 }
 .burger-seal[hidden] { display: none; }
-.burger-photo {
+.burger-figure {
   position: absolute;
   right: 60px;
   bottom: 40px;
   width: 640px;
-  height: auto;
   z-index: 1;
+}
+.burger-photo {
+  width: 100%;
+  height: auto;
+  transform-origin: center center;
+  will-change: transform;
+}
+.burger-info {
+  display: none;
+}
+.burger-mobile-title {
+  display: none;
 }
 
 /* ============================================================
@@ -928,6 +998,58 @@ a { text-decoration: none; color: inherit; }
 }
 .footer__btn:hover { background: var(--butter); color: var(--black); }
 
+body.has-receipt-modal { overflow: hidden; }
+
+.receipt-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px 16px;
+  background: rgba(56, 56, 56, .72);
+}
+.receipt-modal[hidden] { display: none; }
+.receipt-modal__panel {
+  position: relative;
+  width: min(340px, 100%);
+  max-height: 92dvh;
+  overflow: auto;
+}
+.receipt-modal__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  background: var(--burro);
+  color: var(--black);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.receipt-modal .receipt {
+  position: relative;
+  width: 100%;
+  padding: 28px 16px 20px;
+  gap: 10px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .35);
+}
+.receipt-modal .receipt__addr,
+.receipt-modal .receipt__foot,
+.receipt-modal .receipt__note,
+.receipt-modal .receipt__order { display: none; }
+.receipt-modal .receipt__title { font-size: 32px; }
+.receipt-modal .receipt__list { font-size: 13px; gap: 7px; }
+.receipt-modal .receipt__total { font-size: 26px; }
+.receipt-modal .receipt__tag { font-size: 26px; }
+
 /* ============================================================
    RESPONSIVE
    Tre fasce:
@@ -979,29 +1101,9 @@ a { text-decoration: none; color: inherit; }
   .location__photo--right { width: 34%; }
 }
 
-/* ---------- 768px–1511px — palco burger scalato ----------
-   I figli del palco hanno coordinate assolute sulla griglia 1512×982 del
-   Figma: invece di ricomporli, sotto i 1512px si scala il palco intero.
-   - origin `top left` con il palco ancorato a sinistra: con width:1512px in un
-     contenitore più stretto i margini auto collassano a 0, quindi `top center`
-     scalerebbe attorno a un centro che non è quello del contenitore.
-   - cqw invece di vw: vw include la scrollbar e taglierebbe il bordo destro.
-   - aspect-ratio sul contenitore: il transform non tocca il layout, quindi
-     l'altezza visiva la deve dichiarare .burger-showcase. */
-@media (min-width: 768px) and (max-width: 1511px) {
-  .burger-showcase {
-    container-type: inline-size;
-    aspect-ratio: 1512 / 982;
-    height: auto;
-  }
-  .burger-stage {
-    width: 1512px;
-    max-width: none;
-    margin-inline: 0;
-    transform-origin: top left;
-    transform: scale(calc(100cqw / 1512px));
-  }
-}
+/* ---------- 768px–1511px — palco burger già scalato nel viewport ----------
+   Il palco 1512×982 viene ridotto con container query su .burger-showcase
+   (100dvh), quindi non serve più una scala dedicata per questa fascia. */
 
 /* ---------- ≤900px — tablet ---------- */
 @media (max-width: 900px) {
@@ -1059,6 +1161,7 @@ a { text-decoration: none; color: inherit; }
   .sticker:nth-child(3) { left: calc(100% - 40px) !important; top: 60px !important; width: 100px !important; }
   .sticker:nth-child(4) { left: -46px !important; top: auto !important; bottom: 6px !important;  width: 92px !important; }
   .sticker:nth-child(6) { left: calc(100% - 44px) !important; top: auto !important; bottom: 20px !important; width: 96px !important; }
+  .sticker { pointer-events: none; cursor: default; }
 
   .top-wrap { padding-bottom: 24px; }
 
@@ -1098,76 +1201,84 @@ a { text-decoration: none; color: inherit; }
   .marquee::after  { bottom: 5px; }
   .marquee__group { font-size: 22px; }
 
-  /* ---- Burger showcase ----
-     Sul desktop è un palco 1512×982 con figli in position:absolute.
-     Su mobile il palco torna a flusso verticale: badge → panino → bottone →
-     scontrini. Niente più scale(): a queste larghezze rimpicciolirebbe
-     i testi degli scontrini fino a renderli illeggibili. */
+  /* ---- Burger showcase: layout mobile a tutto schermo ----
+     Panino + titolo + info al centro. Lo scontrino si apre a pop-up. */
   .burger-stage {
+    position: relative;
+    left: auto;
+    top: auto;
     transform: none;
     width: 100%;
-    height: auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding: 28px 16px 36px;
+    justify-content: center;
+    gap: 12px;
+    padding: 72px 16px 28px;
   }
   .burger-seal {
     position: static;
     order: 1;
-    width: 150px;
+    width: 110px;
     transform: rotate(-8deg);
   }
-  .burger-photo {
-    position: static;
+  .burger-figure {
+    position: relative;
     order: 2;
-    width: min(300px, 88%);
+    right: auto;
+    bottom: auto;
+    width: min(280px, 72vw);
   }
+  .burger-photo {
+    width: 100%;
+  }
+  .burger-info {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    top: 6%;
+    right: 2%;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 2px solid var(--black);
+    border-radius: 50%;
+    background: var(--burro);
+    color: var(--black);
+    font-family: var(--font-nav);
+    font-weight: 700;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 8;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .18);
+  }
+  .burger-mobile-title {
+    display: block;
+    order: 3;
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1;
+    text-align: center;
+    color: var(--burro);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .25);
+  }
+  .burger-showcase--butter .burger-mobile-title,
+  .burger-showcase--cheese .burger-mobile-title { color: var(--black); }
   .burger-btn-slot {
     position: static;
-    order: 3;
-    width: min(260px, 76%);
-  }
-  .burger-btn__text { font-size: 26px; }
-  .burger-btn__text small { font-size: 13px; }
-
-  /* Gli scontrini restano sovrapposti, ma in una griglia 1×1:
-     la griglia si dimensiona sullo scontrino più alto, così lo stack
-     non ha più bisogno di un'altezza fissa. */
-  .receipt-stack {
-    position: static;
     order: 4;
-    display: grid;
-    /* minmax(0,1fr): senza, la traccia implicita è `auto` e si allarga
-       al min-content dello scontrino, sfondando la larghezza dello stack */
-    grid-template-columns: minmax(0, 1fr);
-    width: min(330px, 94%);
-    height: auto;
+    width: min(240px, 72%);
   }
-  .receipt {
-    position: relative;
-    grid-area: 1 / 1;
-    min-width: 0;
-    left: auto;
-    top: auto;
-    width: 100%;
-    padding: 26px 16px;
-    gap: 12px;
-    /* offset e rotazioni dello stack dimezzati: quelli desktop, su uno
-       scontrino alto ~550px, facevano sbordare gli angoli fuori dal palco */
-    transform: translate(calc(var(--dx, 0px) * .5), calc(var(--dy, 0px) * .5 - 30px)) rotate(calc(var(--rot, 3deg) * .5));
-  }
-  .receipt.is-shown {
-    transform: translate(calc(var(--dx, 0px) * .5), calc(var(--dy, 0px) * .5)) rotate(calc(var(--rot, 3deg) * .5));
-  }
-  .receipt__wordmark { width: 132px; height: 27px; }
-  .receipt__title { font-size: 34px; }
-  .receipt__list  { font-size: 13px; gap: 7px; }
-  .receipt__total { font-size: 26px; }
-  .receipt__order { font-size: 14px; }
-  .receipt__tag   { font-size: 26px; }
-  .receipt__stars { font-size: 14px; height: 9px; }
+  .burger-btn__text { font-size: 24px; }
+  .burger-btn__text small { font-size: 12px; }
+
+  .receipt-stack { display: none; }
 
   /* ---- Fries / drinks ---- */
   .fries-drinks { padding: 32px 16px; }
@@ -1177,44 +1288,45 @@ a { text-decoration: none; color: inherit; }
   .priceline__sub  { font-size: 12px; }
   .price { font-size: 24px; }
 
-  /* ---- Combo ---- */
+  /* ---- Combo: tre colonne come il desktop, in scala ridotta ---- */
   .marquee--combo { margin: 16px 0; }
   .combo-heading { font-size: 40px; }
-  .combo { padding: 16px; }
-  .combo__bar { padding: 16px; }
-  .combo__bar > p { font-size: 17px; }
-  .combo__grid { flex-direction: column; }
-  .combo__col { padding: 20px 16px 56px; }
+  .combo { padding: 16px 8px; }
+  .combo__bar { padding: 12px 8px; }
+  .combo__bar > p { font-size: 13px; }
+  .combo__grid { flex-direction: row; }
+  .combo__col { padding: 12px 6px 48px; gap: 8px; }
   .combo__col + .combo__col {
-    border-left: 0;
-    border-top: 2px solid var(--black);
+    border-left: 2px solid var(--black);
+    border-top: 0;
   }
-  .combo__name, .combo__label { font-size: 20px; }
-  .combo__photo { width: 170px; }
-  .combo__price { width: 118px; height: 58px; font-size: 28px; }
-  .combo__make { font-size: 22px; }
-  .combo__swap { font-size: 15px; }
-  /* niente hover su touch: l'upgrade prezzi si attiva col tap (vedi main.js) */
+  .combo__name, .combo__label { font-size: 11px; }
+  .combo__photo { width: min(96px, 100%); }
+  .combo__price { width: 84px; height: 44px; font-size: 18px; }
+  .combo__make { font-size: 16px; }
+  .combo__swap { font-size: 12px; }
 
-  /* ---- Location ---- */
+  /* ---- Location: composizione a 3 foto che sbordano, come il desktop ---- */
   .location {
-    padding: 32px 16px;
+    padding: 32px 16px 40px;
     gap: 20px;
+    overflow: visible;
     background: linear-gradient(to bottom,
-      var(--burro) 0, var(--burro) 96px,
-      var(--sunny-road) 96px, var(--sunny-road) 100%);
+      var(--burro) 0, var(--burro) 140px,
+      var(--sunny-road) 140px, var(--sunny-road) 100%);
   }
   .location__title { font-size: 28px; gap: 8px; }
   .location__95 { width: 38px; height: 22px; }
-  /* le tre foto ruotate diventano una sola foto dritta */
-  .location__photos { width: 100%; height: auto; }
-  .location__photo--left,
-  .location__photo--right { display: none; }
-  .location__photo--main {
-    position: static;
-    width: 100%;
-    transform: none;
+  .location__photos {
+    width: 118%;
+    max-width: none;
+    height: 210px;
   }
+  .location__photo--left,
+  .location__photo--right { display: block; }
+  .location__photo--main  { width: 68%; left: 50%; transform: translate(-50%, -50%); }
+  .location__photo--left  { width: 52%; left: -6%;  transform: translateY(-50%) rotate(-5deg); }
+  .location__photo--right { width: 52%; right: -6%; transform: translateY(-50%) rotate(5deg); }
   .location__info { gap: 18px; }
   .location__addr { font-size: 30px; }
   .location__hours { gap: 16px; font-size: 15px; }
@@ -1245,4 +1357,8 @@ a { text-decoration: none; color: inherit; }
   .combo-heading { font-size: 34px; }
   .priceline__name { font-size: 17px; }
   .location__addr { font-size: 26px; }
+  .combo__name, .combo__label { font-size: 10px; }
+  .combo__photo { width: 72px; }
+  .combo__price { width: 72px; height: 40px; font-size: 16px; }
+  .hero__rotator { white-space: normal; }
 }

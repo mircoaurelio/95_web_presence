@@ -2,9 +2,8 @@
    NINETYFIVE — script del sito
    ============================================================ */
 
-/* ---------- Hero: rotazione delle parole ---------- */
-/* Le parole ciclano come nel Figma: House of ___ */
-(function heroRotator() {
+/* ---------- Hero: macchina da scrivere sotto "House of" ---------- */
+(function heroTypewriter() {
   const el = document.querySelector(".hero__rotator");
   if (!el) return;
 
@@ -21,22 +20,86 @@
     "Coming back",
   ];
 
+  const TYPE = 72;
+  const DELETE = 42;
+  const HOLD = 1800;
+  const GAP = 380;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
   let i = 0;
-  const HOLD = 2000;   // quanto resta ferma ogni parola (ms)
-  const FADE = 350;    // durata della dissolvenza (ms)
+  let char = 0;
+  let deleting = false;
 
-  // Rispetta chi ha attivato "riduci animazioni" nel sistema
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduceMotion) return;
+  function tick() {
+    const word = words[i];
+    if (!deleting) {
+      char += 1;
+      el.textContent = word.slice(0, char);
+      if (char === word.length) {
+        deleting = true;
+        setTimeout(tick, HOLD);
+        return;
+      }
+      setTimeout(tick, TYPE);
+    } else {
+      char -= 1;
+      el.textContent = word.slice(0, char);
+      if (char === 0) {
+        deleting = false;
+        i = (i + 1) % words.length;
+        setTimeout(tick, GAP);
+        return;
+      }
+      setTimeout(tick, DELETE);
+    }
+  }
 
-  setInterval(() => {
-    el.classList.add("is-out");           // esce (dissolve verso il basso)
-    setTimeout(() => {
-      i = (i + 1) % words.length;
-      el.textContent = words[i];
-      el.classList.remove("is-out");      // entra la nuova parola
-    }, FADE);
-  }, HOLD);
+  el.textContent = words[0];
+  char = words[0].length;
+  deleting = true;
+  setTimeout(tick, HOLD);
+})();
+
+/* ---------- Stickers: layer frontale, fluttuanti, draggabili da desktop ---------- */
+(function stickersPlay() {
+  const layer = document.querySelector(".stickers");
+  if (!layer) return;
+
+  const desktop = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+
+  function bindDrag(el) {
+    let ox = 0;
+    let oy = 0;
+
+    el.addEventListener("pointerdown", (e) => {
+      if (!desktop.matches || e.button !== 0) return;
+      const r = el.getBoundingClientRect();
+      ox = e.clientX - r.left;
+      oy = e.clientY - r.top;
+      el.classList.add("is-dragging");
+      el.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+
+    el.addEventListener("pointermove", (e) => {
+      if (!el.classList.contains("is-dragging")) return;
+      const parent = layer.getBoundingClientRect();
+      el.style.left = `${e.clientX - parent.left - ox}px`;
+      el.style.top = `${e.clientY - parent.top - oy}px`;
+      el.style.right = "auto";
+      el.style.bottom = "auto";
+    });
+
+    function release() {
+      el.classList.remove("is-dragging");
+    }
+
+    el.addEventListener("pointerup", release);
+    el.addEventListener("pointercancel", release);
+  }
+
+  layer.querySelectorAll(".sticker").forEach(bindDrag);
 })();
 
 /* ---------- Combo: "Make it Burger Fries" → banner scuro + prezzi +5 ---------- */
@@ -45,7 +108,6 @@
   const makeBar = document.querySelector(".combo__bar--make");
   if (!combo || !makeBar) return;
 
-  // Su touch non esiste hover: la barra diventa un interruttore da toccare.
   if (window.matchMedia("(hover: none)").matches) {
     makeBar.setAttribute("role", "button");
     makeBar.setAttribute("tabindex", "0");
@@ -58,11 +120,14 @@
   makeBar.addEventListener("mouseleave", () => combo.classList.remove("is-upgraded"));
 })();
 
-/* ---------- Carosello panini: click per avanzare, scontrini che si impilano ---------- */
+/* ---------- Menù: palco a tutto schermo, scroll → rotazione + cambio alimento ---------- */
 (function burgerCarousel() {
+  const pin = document.getElementById("burgerPin");
   const showcase = document.querySelector(".burger-showcase");
   const root = document.getElementById("burgerCarousel");
-  if (!showcase || !root) return;
+  const modal = document.getElementById("receiptModal");
+  const modalBody = document.getElementById("receiptModalBody");
+  if (!pin || !showcase || !root) return;
 
   const BURGERS = [
     { key: "butter", title: "Butter Burger", seal: "assets/seal-butter-burger.svg",
@@ -84,6 +149,7 @@
   ];
 
   const STARS = "*****************************************";
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function receiptHTML(b, i) {
     const items = b.items.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
@@ -96,7 +162,7 @@
         <div class="receipt__stars">${STARS}</div>
         <dl class="receipt__list">${items}</dl>
         <div class="receipt__stars">${STARS}</div>
-        <div class="receipt__total"><span>TOTAL</span><span class="receipt__price">${b.total}<sup>95</sup></span></div>
+        <div class="receipt__total"><span>TOTAL</span><span class="receipt__price">${b.total}.<sup>95</sup></span></div>
         <div class="receipt__stars">${STARS}</div>
         <p class="receipt__order">${b.order}</p>
         ${b.note ? `<p class="receipt__note">${b.note}</p>` : ""}
@@ -123,15 +189,21 @@
       <div class="receipt-stack">${BURGERS.map(receiptHTML).join("")}</div>
       <div class="burger-btn-slot"></div>
       <img class="burger-seal" alt="" aria-hidden="true" />
-      <img class="burger-photo" src="assets/burger-photo.png" alt="Ninetyfive burger" />
+      <div class="burger-figure">
+        <img class="burger-photo" src="assets/burger-photo.png" alt="Ninetyfive burger" />
+        <button type="button" class="burger-info" aria-label="View ingredients">i</button>
+      </div>
+      <p class="burger-mobile-title" aria-live="polite"></p>
     </div>`;
 
   const receipts = [...root.querySelectorAll(".receipt")];
   const seal = root.querySelector(".burger-seal");
   const slot = root.querySelector(".burger-btn-slot");
+  const photo = root.querySelector(".burger-photo");
+  const infoBtn = root.querySelector(".burger-info");
+  const mobileTitle = root.querySelector(".burger-mobile-title");
   let state = 0;
 
-  // se un bollo non è ancora disponibile, si nasconde invece di apparire "rotto"
   seal.addEventListener("error", () => { seal.hidden = true; });
 
   function setState(i) {
@@ -141,9 +213,70 @@
     receipts.forEach((r, j) => r.classList.toggle("is-shown", j <= state));
     if (b.seal) { seal.hidden = false; seal.src = b.seal; } else { seal.hidden = true; }
     slot.innerHTML = buttonHTML(b);
+    if (mobileTitle) mobileTitle.textContent = b.title;
+  }
+
+  function clamp(n, min, max) {
+    return Math.min(max, Math.max(min, n));
+  }
+
+  function pinProgress() {
+    const pinH = pin.offsetHeight;
+    const viewH = showcase.offsetHeight || window.innerHeight;
+    const scrollable = Math.max(1, pinH - viewH);
+    const scrolled = clamp(-pin.getBoundingClientRect().top, 0, scrollable);
+    return scrolled / scrollable;
+  }
+
+  function applyProgress(progress) {
+    const n = BURGERS.length;
+    const scaled = progress * n;
+    const index = clamp(Math.min(n - 1, Math.floor(scaled)), 0, n - 1);
+    if (index !== state) setState(index);
+    if (photo) {
+      const deg = reduceMotion ? 0 : progress * 360;
+      photo.style.transform = `rotate(${deg}deg)`;
+    }
+  }
+
+  function onScroll() {
+    applyProgress(pinProgress());
   }
 
   setState(0);
-  showcase.style.cursor = "pointer";
-  showcase.addEventListener("click", () => setState(state + 1));
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+
+  function openReceipt() {
+    if (!modal || !modalBody) return;
+    modalBody.innerHTML = receiptHTML(BURGERS[state], state);
+    const article = modalBody.querySelector(".receipt");
+    if (article) {
+      article.classList.add("is-shown");
+      article.style.transform = "none";
+    }
+    modal.hidden = false;
+    document.body.classList.add("has-receipt-modal");
+    modal.querySelector(".receipt-modal__close")?.focus();
+  }
+
+  function closeReceipt() {
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.classList.remove("has-receipt-modal");
+  }
+
+  infoBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openReceipt();
+  });
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.closest("[data-close-receipt]")) closeReceipt();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal && !modal.hidden) closeReceipt();
+  });
 })();

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600;1,9..144,700;1,9..144,900&family=Jost:wght@400;500;700&family=Raleway:wght@400;500;700&family=Yellowtail&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=35" />
+  <link rel="stylesheet" href="css/style.css?v=36" />
 </head>
 <body>
 
@@ -19,7 +19,7 @@
   <header class="site-header">
     <nav class="nav">
       <a href="#about" class="nav__item">About Us</a>
-      <a href="#menu" class="nav__item">Menù</a>
+      <a href="#burgerPin" class="nav__item">Menù</a>
       <a href="#contacts" class="nav__item">Contacts</a>
     </nav>
     <a href="#top" class="nav__logo" aria-label="Ninetyfive home">
@@ -36,16 +36,16 @@
          top  = mappatura a 2 ancore (Hero 355→163, About 787→431, scala 0.62)
          width = larghezza reale del nodo Figma. -->
     <div class="stickers" aria-hidden="true">
-      <img class="sticker" style="left:22px;   top:166px;  width:188px; --rot:-10deg;" src="assets/sticker-01.png" alt="" />
-      <img class="sticker" style="left:513px;  top:-17px;  width:188px; --rot:10deg;"  src="assets/sticker-02.png" alt="" />
-      <img class="sticker" style="left:1230px; top:17px;   width:194px; --rot:15deg;"  src="assets/sticker-04.png" alt="" />
-      <img class="sticker" style="left:10px;   top:692px;  width:170px; --rot:0deg;"   src="assets/sticker-05.png" alt="" />
-      <img class="sticker" style="left:569px;  top:140px;  width:195px; --rot:15deg;"  src="assets/sticker-06.png" alt="" />
-      <img class="sticker" style="left:1317px; top:229px;  width:198px; --rot:-16deg;" src="assets/sticker-07.png" alt="" />
-      <img class="sticker" style="left:1041px; top:442px;  width:186px; --rot:-15deg;" src="assets/sticker-09.png" alt="" />
-      <img class="sticker" style="left:391px;  top:293px;  width:145px; --rot:-10deg;" src="assets/sticker-10.png" alt="" />
-      <img class="sticker" style="left:961px;  top:265px;  width:186px; --rot:10deg;"  src="assets/sticker-11.png" alt="" />
-      <img class="sticker" style="left:1457px; top:399px;  width:190px; --rot:10deg;"  src="assets/sticker-14.png" alt="" />
+      <div class="sticker" style="left:22px;   top:166px;  width:188px; --rot:-10deg; --i:0;"><img src="assets/sticker-01.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:513px;  top:-17px;  width:188px; --rot:10deg;  --i:1;"><img src="assets/sticker-02.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:1230px; top:17px;   width:194px; --rot:15deg;  --i:2;"><img src="assets/sticker-04.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:10px;   top:692px;  width:170px; --rot:0deg;   --i:3;"><img src="assets/sticker-05.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:569px;  top:140px;  width:195px; --rot:15deg;  --i:4;"><img src="assets/sticker-06.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:1317px; top:229px;  width:198px; --rot:-16deg; --i:5;"><img src="assets/sticker-07.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:1041px; top:442px;  width:186px; --rot:-15deg; --i:6;"><img src="assets/sticker-09.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:391px;  top:293px;  width:145px; --rot:-10deg; --i:7;"><img src="assets/sticker-10.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:961px;  top:265px;  width:186px; --rot:10deg;  --i:8;"><img src="assets/sticker-11.png" alt="" draggable="false" /></div>
+      <div class="sticker" style="left:1457px; top:399px;  width:190px; --rot:10deg;  --i:9;"><img src="assets/sticker-14.png" alt="" draggable="false" /></div>
     </div>
 
     <!-- ---- Hero ---- -->
@@ -116,10 +116,12 @@
       </div>
     </div>
 
-    <!-- ============ BURGER SHOWCASE: carosello 4 stati (generato da JS) ============ -->
-    <section class="burger-showcase">
-      <div class="burger-carousel" id="burgerCarousel"><!-- slide inserite da js/main.js --></div>
-    </section>
+    <!-- ============ BURGER SHOWCASE: palco sticky a tutto schermo, scroll → rotazione ============ -->
+    <div class="burger-pin" id="burgerPin">
+      <section class="burger-showcase">
+        <div class="burger-carousel" id="burgerCarousel"><!-- slide inserite da js/main.js --></div>
+      </section>
+    </div>
 
     <!-- ============ FRIES / DRINKS (scura) ============ -->
     <section class="fries-drinks">
@@ -131,16 +133,16 @@
             <span class="priceline__name">FRIES</span>
             <span class="priceline__sub">*Our fries are frozen at origin</span>
           </div>
-          <span class="price">3<sup>95</sup></span>
+          <span class="price">3.<sup>95</sup></span>
         </div>
         <div class="dark-stars">*************************************************************</div>
         <div class="priceline">
           <span class="priceline__name">STILL - SPARKLING WATER</span>
-          <span class="price">0<sup>95</sup></span>
+          <span class="price">0.<sup>95</sup></span>
         </div>
         <div class="priceline">
           <span class="priceline__name">PEPSI - PEPSI ZERO - 7UP</span>
-          <span class="price">2<sup>95</sup></span>
+          <span class="price">2.<sup>95</sup></span>
         </div>
         <div class="dark-stars">*************************************************************</div>
       </div>
@@ -163,17 +165,17 @@
         <div class="combo__col">
           <div class="combo__head"><span class="combo__name">Cheese Burger</span><span class="combo__label">Combo</span></div>
           <img class="combo__photo" src="assets/burger-photo.png" alt="Cheese Burger Combo" />
-          <div class="combo__price"><span class="combo__price-base">14<sup>95</sup></span><span class="combo__price-up">19<sup>95</sup></span></div>
+          <div class="combo__price"><span class="combo__price-base">14.<sup>95</sup></span><span class="combo__price-up">19.<sup>95</sup></span></div>
         </div>
         <div class="combo__col">
           <div class="combo__head"><span class="combo__name">Butter Burger</span><span class="combo__label">Combo</span></div>
           <img class="combo__photo" src="assets/burger-photo.png" alt="Butter Burger Combo" />
-          <div class="combo__price"><span class="combo__price-base">15<sup>95</sup></span><span class="combo__price-up">20<sup>95</sup></span></div>
+          <div class="combo__price"><span class="combo__price-base">15.<sup>95</sup></span><span class="combo__price-up">20.<sup>95</sup></span></div>
         </div>
         <div class="combo__col">
           <div class="combo__head"><span class="combo__name">Bacon Burger</span><span class="combo__label">Combo</span></div>
           <img class="combo__photo" src="assets/burger-photo.png" alt="Bacon Burger Combo" />
-          <div class="combo__price"><span class="combo__price-base">16<sup>95</sup></span><span class="combo__price-up">21<sup>95</sup></span></div>
+          <div class="combo__price"><span class="combo__price-base">16.<sup>95</sup></span><span class="combo__price-up">21.<sup>95</sup></span></div>
         </div>
       </div>
       <div class="combo__bar combo__bar--make">
@@ -230,6 +232,13 @@
     </footer>
   </main>
 
-  <script src="js/main.js?v=9"></script>
+  <div class="receipt-modal" id="receiptModal" hidden>
+    <div class="receipt-modal__panel" role="dialog" aria-modal="true" aria-label="Receipt">
+      <button type="button" class="receipt-modal__close" data-close-receipt aria-label="Close receipt">×</button>
+      <div id="receiptModalBody"></div>
+    </div>
+  </div>
+
+  <script src="js/main.js?v=10"></script>
 </body>
 </html>
