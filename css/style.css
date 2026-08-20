@@ -374,7 +374,7 @@ a { text-decoration: none; color: inherit; }
    Finita la rotazione del blocco nero, lo scroll normale riprende.
    ============================================================ */
 .burger-pin {
-  height: 500vh;               /* 1 viewport sticky + 4 stati da 100vh */
+  height: calc(100vh * (1 + 4 * 5 * 0.4)); /* 1 sticky + 5 angle frames per burger */
 }
 .burger-showcase {
   position: sticky;
@@ -616,28 +616,18 @@ a { text-decoration: none; color: inherit; }
   z-index: 5;
 }
 .burger-seal[hidden] { display: none; }
-.burger-carousel,
-.burger-stage,
-.burger-figure,
-.burger-rig { transform-style: preserve-3d; }
 .burger-figure {
-  --radius: 260px;
   position: absolute;
   right: 60px;
   bottom: 40px;
   width: 640px;
   aspect-ratio: 1;
   z-index: 1;
-  perspective: 1400px;
-  perspective-origin: 50% 50%;
 }
 .burger-rig {
   width: 100%;
   height: 100%;
   position: relative;
-  transform: rotateY(var(--yaw, 0deg));
-  transform-origin: center center;
-  will-change: transform;
 }
 .burger-photo {
   position: absolute;
@@ -645,12 +635,11 @@ a { text-decoration: none; color: inherit; }
   width: 100%;
   height: 100%;
   object-fit: contain;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: rotateY(var(--slot, 0deg)) translateZ(var(--radius));
-  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, .28));
+  opacity: 0;
   pointer-events: none;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, .28));
 }
+.burger-photo.is-on { opacity: 1; }
 .burger-info {
   display: none;
 }
@@ -1246,13 +1235,11 @@ body.has-receipt-modal { overflow: hidden; }
     transform: rotate(-8deg);
   }
   .burger-figure {
-    --radius: 130px;
     position: relative;
     order: 2;
     right: auto;
     bottom: auto;
     width: min(280px, 72vw);
-    perspective: 800px;
   }
   .burger-info {
     display: grid;

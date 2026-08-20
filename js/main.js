@@ -129,20 +129,25 @@
   const modalBody = document.getElementById("receiptModalBody");
   if (!pin || !showcase || !root) return;
 
+  const ANGLES = 5;
   const BURGERS = [
-    { key: "butter", title: "Butter Burger", photo: "assets/burger-butter.png", seal: "assets/seal-butter-burger.svg",
+    { key: "butter", title: "Butter Burger", seal: "assets/seal-butter-burger.svg",
+      photos: ["assets/burger-butter.png", "assets/burger-butter-2.png", "assets/burger-butter-3.png", "assets/burger-butter-4.png", "assets/burger-butter-5.png"],
       btn: "counter", total: "10", order: "ORDER #BB095", note: "NO DELIVERY - COUNTER ONLY",
       items: [["DOUBLE PATTY", "Fresh prime ground beef"], ["CHEESE", "Double white cheddar"], ["ONIONS", "Butter-grilled onions"], ["PICKLES", "Included"], ["BUN", "Potato Bun"], ["BUTTER", "Soft butter"]],
       foot: ["Counter Order", "Plate + napkin + wipe"], tag: "Butter is better!", rot: "2deg", dx: "0px", dy: "0px" },
-    { key: "bacon", title: "Bacon Burger", photo: "assets/burger-bacon.png", seal: "assets/seal-bacon.svg",
+    { key: "bacon", title: "Bacon Burger", seal: "assets/seal-bacon.svg",
+      photos: ["assets/burger-bacon.png", "assets/burger-bacon-2.png", "assets/burger-bacon-3.png", "assets/burger-bacon-4.png", "assets/burger-bacon-5.png"],
       btn: "order", total: "11", order: "ORDER #BA095", note: null,
       items: [["DOUBLE PATTY", "Fresh prime ground beef"], ["CHEESE", "Double American cheese"], ["BACON", "Honey crispy bacon"], ["ONIONS", "Butter-grilled onions"], ["PICKLES", "Included"], ["BUN", "Potato Bun"], ["SAUCE", "Mustard 95 sauce"]],
       foot: ["Counter Order", "Wrapped in foil, napkin + wipe included"], tag: "Crispy business", rot: "-5deg", dx: "-24px", dy: "14px" },
-    { key: "cheese", title: "Cheese Burger", photo: "assets/burger-cheese.png", seal: "assets/seal-cheese.svg",
+    { key: "cheese", title: "Cheese Burger", seal: "assets/seal-cheese.svg",
+      photos: ["assets/burger-cheese.png", "assets/burger-cheese-2.png", "assets/burger-cheese-3.png", "assets/burger-cheese-4.png", "assets/burger-cheese-5.png"],
       btn: "order", total: "9", order: "ORDER #BC095", note: null,
       items: [["DOUBLE PATTY", "Fresh prime ground beef"], ["CHEESE", "Double American cheese"], ["ONIONS", "Butter-grilled onions"], ["PICKLES", "Included"], ["BUN", "Potato Bun"], ["SAUCE", "95 sauce"]],
       foot: ["Counter Order", "Wrapped in foil, napkin + wipe included"], tag: "Say cheese!", rot: "6deg", dx: "22px", dy: "-8px" },
-    { key: "fries", title: "Burger Fries", photo: "assets/burger-fries.png", seal: "assets/seal-fries.svg",
+    { key: "fries", title: "Burger Fries", seal: "assets/seal-fries.svg",
+      photos: ["assets/burger-fries.png", "assets/burger-fries-2.png", "assets/burger-fries-3.png", "assets/burger-fries-4.png", "assets/burger-fries-5.png"],
       btn: "order", total: "9", order: "ORDER #BF095", note: null,
       items: [["FRIES", "Classic fries*"], ["PATTY", "Fresh prime ground beef"], ["CHEESE", "American cheese"], ["ONIONS", "Butter-grilled onions"], ["SAUCE", "95 sauce"]],
       foot: ["Counter Order", "Pulp tray, fork included", "*Our fries are frozen at origin"], tag: "Fries with benefits", rot: "-4deg", dx: "-16px", dy: "22px" },
@@ -184,8 +189,10 @@
     </div>`;
   }
 
-  const photosHTML = BURGERS.map((b, i) =>
-    `<img class="burger-photo" src="${b.photo}" alt="${b.title}" style="--slot:${i * 90}deg" draggable="false" />`
+  const photosHTML = BURGERS.flatMap((b, bi) =>
+    b.photos.map((src, ai) =>
+      `<img class="burger-photo" data-b="${bi}" data-a="${ai}" src="${src}" alt="" draggable="false" />`
+    )
   ).join("");
 
   root.innerHTML = `
@@ -201,9 +208,9 @@
     </div>`;
 
   const receipts = [...root.querySelectorAll(".receipt")];
+  const photos = [...root.querySelectorAll(".burger-photo")];
   const seal = root.querySelector(".burger-seal");
   const slot = root.querySelector(".burger-btn-slot");
-  const rig = root.querySelector(".burger-rig");
   const infoBtn = root.querySelector(".burger-info");
   const mobileTitle = root.querySelector(".burger-mobile-title");
   let state = 0;
@@ -232,15 +239,27 @@
     return scrolled / scrollable;
   }
 
+  function showAngle(bi, ai) {
+    photos.forEach((img) => {
+      const on = Number(img.dataset.b) === bi && Number(img.dataset.a) === ai;
+      img.classList.toggle("is-on", on);
+    });
+  }
+
   function applyProgress(progress) {
     const n = BURGERS.length;
-    const t = progress * (n - 1);
-    const index = clamp(Math.round(t), 0, n - 1);
-    if (index !== state) setState(index);
-    if (rig) {
-      const yaw = reduceMotion ? -index * 90 : -t * 90;
-      rig.style.setProperty("--yaw", `${yaw}deg`);
+    if (reduceMotion) {
+      const index = clamp(Math.round(progress * (n - 1)), 0, n - 1);
+      if (index !== state) setState(index);
+      showAngle(index, 0);
+      return;
     }
+    const total = n * ANGLES;
+    const frame = clamp(Math.min(total - 1, Math.floor(progress * total)), 0, total - 1);
+    const index = Math.floor(frame / ANGLES);
+    const angle = frame % ANGLES;
+    if (index !== state) setState(index);
+    showAngle(index, angle);
   }
 
   function onScroll() {
