@@ -73,6 +73,16 @@ a { text-decoration: none; color: inherit; }
   touch-action: none;
   z-index: 20;
 }
+.sign {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.sign.is-dragging,
+.sticker.is-dragging {
+  cursor: grabbing;
+  z-index: 90 !important;
+}
 .sticker img {
   width: 100%;
   height: auto;
@@ -246,9 +256,9 @@ a { text-decoration: none; color: inherit; }
   width: 179px;
   height: auto;
   transform: rotate(-8deg);
-  z-index: 2;
+  z-index: 4;
+  pointer-events: auto;
 }
-/* ovale giallo "Ninety-five" (sticker-03) che sborda a destra — Figma 95T3 */
 .diner__oval {
   position: absolute;
   right: -46px;
@@ -256,7 +266,8 @@ a { text-decoration: none; color: inherit; }
   width: 147px;
   height: auto;
   transform: rotate(-6deg);
-  z-index: 2;
+  z-index: 4;
+  pointer-events: auto;
 }
 
 /* ============================================================
@@ -524,10 +535,6 @@ a { text-decoration: none; color: inherit; }
   font-style: italic;
   font-weight: 700;
 }
-.receipt__price sup {
-  font-size: .5em;
-  vertical-align: super;
-}
 .receipt__order {
   margin: 0;
   font-family: var(--font-nav);
@@ -607,6 +614,8 @@ a { text-decoration: none; color: inherit; }
   height: auto;
   transform: rotate(-15deg);
   z-index: 5;
+  pointer-events: auto;
+  cursor: grab;
 }
 .burger-seal[hidden] { display: none; }
 .burger-figure {
@@ -712,7 +721,15 @@ a { text-decoration: none; color: inherit; }
   color: var(--burro);
   white-space: nowrap;
 }
-.price sup { font-size: .5em; vertical-align: super; }
+.cents {
+  font-size: .55em;
+  font-style: italic;
+  font-weight: 700;
+  position: relative;
+  top: -0.52em;
+  margin-left: .04em;
+  letter-spacing: .01em;
+}
 
 /* ============================================================
    COMBO MENU
@@ -809,7 +826,6 @@ a { text-decoration: none; color: inherit; }
   line-height: 1;
   color: var(--burro);
 }
-.combo__price sup { font-size: .5em; vertical-align: super; }
 
 .combo__bar--make {
   border-top: 0;
@@ -1075,21 +1091,13 @@ body.has-receipt-modal { overflow: hidden; }
      La composizione Figma (10 pezzi su una fascia da 1619px centrata) tiene
      solo a 1512px: la colonna di testo è larga al massimo 840px e centrata,
      quindi appena la pagina si stringe i francobolli dei margini le finiscono
-     addosso — scalare o restringere il contenitore non lo evita. Sotto i
-     1200px se ne tengono quindi 4, ancorati ai bordi della viewport e per metà
-     fuori campo: restano decorativi e non toccano mai il testo.
-     La coppia bassa è ancorata al `bottom` del top-wrap perché la sua distanza
-     dall'alto cambia con quanto va a capo il testo about. */
+     addosso — scalare o restringere il contenitore non lo evita. Su tablet
+     restano tutti visibili e draggabili; su mobile se ne tengono 4 ai bordi. */
   .stickers {
     width: 100%;
     left: 0;
     transform: none;
   }
-  .sticker { display: none !important; }
-  .sticker:nth-child(1) { display: block !important; left: -30px !important;             top: 90px !important;  width: 150px !important; }
-  .sticker:nth-child(3) { display: block !important; left: calc(100% - 118px) !important; top: 70px !important;  width: 152px !important; }
-  .sticker:nth-child(4) { display: block !important; left: -34px !important;             top: auto !important; bottom: 8px !important;  width: 140px !important; }
-  .sticker:nth-child(6) { display: block !important; left: calc(100% - 104px) !important; top: auto !important; bottom: 24px !important; width: 144px !important; }
 
   .infobar__cell--delivery { flex: 0 0 34%; }
 
@@ -1158,14 +1166,13 @@ body.has-receipt-modal { overflow: hidden; }
   .nav__logo img { width: 56px; }
 
   /* ---- Francobolli ----
-     Stessa logica della fascia ≤1200px, con misure da telefono: la coppia alta
-     fiancheggia il titolo hero, quella bassa sta nelle tasche vuote ai lati del
-     wordmark (ancorata al bottom, così non dipende da quanto va a capo l'about). */
-  .sticker:nth-child(1) { left: -60px !important;             top: 78px !important; width: 96px !important; }
-  .sticker:nth-child(3) { left: calc(100% - 40px) !important; top: 60px !important; width: 100px !important; }
-  .sticker:nth-child(4) { left: -46px !important; top: auto !important; bottom: 6px !important;  width: 92px !important; }
-  .sticker:nth-child(6) { left: calc(100% - 44px) !important; top: auto !important; bottom: 20px !important; width: 96px !important; }
-  .sticker { pointer-events: none; cursor: default; }
+     Su telefono se ne tengono 4 ai bordi. Non sono draggabili. */
+  .sticker { display: none !important; }
+  .sticker:nth-child(1) { display: block !important; left: -60px !important;             top: 78px !important; width: 96px !important; }
+  .sticker:nth-child(3) { display: block !important; left: calc(100% - 40px) !important; top: 60px !important; width: 100px !important; }
+  .sticker:nth-child(4) { display: block !important; left: -46px !important; top: auto !important; bottom: 6px !important;  width: 92px !important; }
+  .sticker:nth-child(6) { display: block !important; left: calc(100% - 44px) !important; top: auto !important; bottom: 20px !important; width: 96px !important; }
+  .sign { pointer-events: none; cursor: default; }
 
   .top-wrap { padding-bottom: 24px; }
 

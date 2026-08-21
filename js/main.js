@@ -61,45 +61,56 @@
   setTimeout(tick, HOLD);
 })();
 
-/* ---------- Stickers: layer frontale, fluttuanti, draggabili da desktop ---------- */
-(function stickersPlay() {
-  const layer = document.querySelector(".stickers");
-  if (!layer) return;
-
+/* ---------- Signs / stickers: tutti draggabili da desktop ---------- */
+(function signsPlay() {
   const desktop = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+  let dragging = null;
+  let ox = 0;
+  let oy = 0;
 
-  function bindDrag(el) {
-    let ox = 0;
-    let oy = 0;
-
-    el.addEventListener("pointerdown", (e) => {
-      if (!desktop.matches || e.button !== 0) return;
-      const r = el.getBoundingClientRect();
-      ox = e.clientX - r.left;
-      oy = e.clientY - r.top;
-      el.classList.add("is-dragging");
-      el.setPointerCapture(e.pointerId);
-      e.preventDefault();
-    });
-
-    el.addEventListener("pointermove", (e) => {
-      if (!el.classList.contains("is-dragging")) return;
-      const parent = layer.getBoundingClientRect();
-      el.style.left = `${e.clientX - parent.left - ox}px`;
-      el.style.top = `${e.clientY - parent.top - oy}px`;
-      el.style.right = "auto";
-      el.style.bottom = "auto";
-    });
-
-    function release() {
-      el.classList.remove("is-dragging");
-    }
-
-    el.addEventListener("pointerup", release);
-    el.addEventListener("pointercancel", release);
+  function parentScale(parent) {
+    const rect = parent.getBoundingClientRect();
+    const w = parent.offsetWidth || rect.width;
+    const h = parent.offsetHeight || rect.height;
+    return {
+      sx: w ? rect.width / w : 1,
+      sy: h ? rect.height / h : 1,
+      rect,
+    };
   }
 
-  layer.querySelectorAll(".sticker").forEach(bindDrag);
+  document.addEventListener("pointerdown", (e) => {
+    const el = e.target.closest(".sign");
+    if (!el || !desktop.matches || e.button !== 0) return;
+    const r = el.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    dragging = el;
+    el.classList.add("is-dragging");
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  document.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const parent = dragging.offsetParent || document.body;
+    const { sx, sy, rect } = parentScale(parent);
+    dragging.style.left = `${(e.clientX - ox - rect.left) / (sx || 1)}px`;
+    dragging.style.top = `${(e.clientY - oy - rect.top) / (sy || 1)}px`;
+    dragging.style.right = "auto";
+    dragging.style.bottom = "auto";
+    dragging.style.position = "absolute";
+  });
+
+  function release() {
+    if (!dragging) return;
+    dragging.classList.remove("is-dragging");
+    dragging = null;
+  }
+
+  document.addEventListener("pointerup", release);
+  document.addEventListener("pointercancel", release);
 })();
 
 /* ---------- Combo: "Make it Burger Fries" → banner scuro + prezzi +5 ---------- */
@@ -167,7 +178,7 @@
         <div class="receipt__stars">${STARS}</div>
         <dl class="receipt__list">${items}</dl>
         <div class="receipt__stars">${STARS}</div>
-        <div class="receipt__total"><span>TOTAL</span><span class="receipt__price">${b.total}.<sup>95</sup></span></div>
+        <div class="receipt__total"><span>TOTAL</span><span class="receipt__price">${b.total}<span class="cents">.95</span></span></div>
         <div class="receipt__stars">${STARS}</div>
         <p class="receipt__order">${b.order}</p>
         ${b.note ? `<p class="receipt__note">${b.note}</p>` : ""}
@@ -199,7 +210,7 @@
     <div class="burger-stage">
       <div class="receipt-stack">${BURGERS.map(receiptHTML).join("")}</div>
       <div class="burger-btn-slot"></div>
-      <img class="burger-seal" alt="" aria-hidden="true" />
+      <img class="burger-seal sign" alt="" aria-hidden="true" draggable="false" />
       <div class="burger-figure">
         <div class="burger-rig">${photosHTML}</div>
         <button type="button" class="burger-info" aria-label="View ingredients">i</button>
