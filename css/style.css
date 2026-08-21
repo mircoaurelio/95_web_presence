@@ -385,7 +385,6 @@ a { text-decoration: none; color: inherit; }
   border-top: 2px solid var(--black);
   transition: background-color .5s ease;
   user-select: none;
-  container-type: size;
 }
 .burger-carousel {
   width: 100%;
@@ -418,13 +417,7 @@ a { text-decoration: none; color: inherit; }
   height: 982px;
   margin: 0;
   transform-origin: center center;
-  transform: translate(-50%, -50%) scale(min(100vw / 1512px, 100vh / 982px));
-}
-@supports (container-type: size) {
-  .burger-showcase { container-type: size; }
-  .burger-stage {
-    transform: translate(-50%, -50%) scale(min(100cqw / 1512px, 100cqh / 982px));
-  }
+  transform: translate(-50%, -50%);
 }
 
 /* ---- Stack scontrini (si impilano al click) ---- */
@@ -621,7 +614,7 @@ a { text-decoration: none; color: inherit; }
   right: 60px;
   bottom: 40px;
   width: 640px;
-  aspect-ratio: 1;
+  height: 640px;
   z-index: 1;
 }
 .burger-rig {
@@ -1218,7 +1211,7 @@ body.has-receipt-modal { overflow: hidden; }
     position: relative;
     left: auto;
     top: auto;
-    transform: none;
+    transform: none !important;
     width: 100%;
     height: 100%;
     display: flex;
@@ -1240,6 +1233,7 @@ body.has-receipt-modal { overflow: hidden; }
     right: auto;
     bottom: auto;
     width: min(280px, 72vw);
+    height: min(280px, 72vw);
   }
   .burger-info {
     display: grid;

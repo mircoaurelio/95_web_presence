@@ -262,14 +262,28 @@
     showAngle(index, angle);
   }
 
+  function fitStage() {
+    const stage = root.querySelector(".burger-stage");
+    if (!stage || window.matchMedia("(max-width: 767px)").matches) {
+      if (stage) stage.style.transform = "";
+      return;
+    }
+    const scale = Math.min(showcase.clientWidth / 1512, showcase.clientHeight / 982);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  }
+
   function onScroll() {
     applyProgress(pinProgress());
   }
 
   setState(0);
+  fitStage();
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
+  window.addEventListener("resize", () => {
+    fitStage();
+    onScroll();
+  });
 
   function openReceipt() {
     if (!modal || !modalBody) return;
