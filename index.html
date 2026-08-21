@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600;1,9..144,700;1,9..144,900&family=Jost:wght@400;500;700&family=Raleway:wght@400;500;700&family=Yellowtail&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=40" />
+  <link rel="stylesheet" href="css/style.css?v=41" />
 </head>
 <body>
 
@@ -74,8 +74,12 @@
     <section class="diner">
       <div class="diner__frame">
         <img class="diner__photo" src="assets/diner-photo.png" alt="Ninetyfive — the counter, 1950s" />
-        <img class="diner__seal sign" src="assets/sticker-13.png" alt="" aria-hidden="true" draggable="false" />
-        <img class="diner__oval sign" src="assets/sticker-03.png" alt="" aria-hidden="true" draggable="false" />
+        <div class="sign diner__seal" style="--rot:-8deg;">
+          <img src="assets/sticker-13.png" alt="" draggable="false" />
+        </div>
+        <div class="sign diner__oval" style="--rot:-6deg;">
+          <img src="assets/sticker-03.png" alt="" draggable="false" />
+        </div>
       </div>
     </section>
 
@@ -239,6 +243,6 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=14"></script>
+  <script src="js/main.js?v=15"></script>
 </body>
 </html>

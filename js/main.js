@@ -63,7 +63,7 @@
 
 /* ---------- Signs / stickers: tutti draggabili da desktop ---------- */
 (function signsPlay() {
-  const desktop = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+  const canDrag = () => window.innerWidth >= 768;
   let dragging = null;
   let ox = 0;
   let oy = 0;
@@ -79,29 +79,27 @@
     };
   }
 
-  document.addEventListener("pointerdown", (e) => {
-    const el = e.target.closest(".sign");
-    if (!el || !desktop.matches || e.button !== 0) return;
+  function startDrag(el, clientX, clientY, pointerId) {
     const r = el.getBoundingClientRect();
-    ox = e.clientX - r.left;
-    oy = e.clientY - r.top;
+    ox = clientX - r.left;
+    oy = clientY - r.top;
     dragging = el;
     el.classList.add("is-dragging");
-    try { el.setPointerCapture(e.pointerId); } catch (_) {}
-    e.preventDefault();
-    e.stopPropagation();
-  });
+    if (pointerId != null) {
+      try { el.setPointerCapture(pointerId); } catch (_) {}
+    }
+  }
 
-  document.addEventListener("pointermove", (e) => {
+  function moveDrag(clientX, clientY) {
     if (!dragging) return;
     const parent = dragging.offsetParent || document.body;
     const { sx, sy, rect } = parentScale(parent);
-    dragging.style.left = `${(e.clientX - ox - rect.left) / (sx || 1)}px`;
-    dragging.style.top = `${(e.clientY - oy - rect.top) / (sy || 1)}px`;
+    dragging.style.left = `${(clientX - ox - rect.left) / (sx || 1)}px`;
+    dragging.style.top = `${(clientY - oy - rect.top) / (sy || 1)}px`;
     dragging.style.right = "auto";
     dragging.style.bottom = "auto";
     dragging.style.position = "absolute";
-  });
+  }
 
   function release() {
     if (!dragging) return;
@@ -109,8 +107,37 @@
     dragging = null;
   }
 
+  document.addEventListener("pointerdown", (e) => {
+    const el = e.target.closest(".sign");
+    if (!el || !canDrag() || e.button !== 0) return;
+    startDrag(el, e.clientX, e.clientY, e.pointerId);
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  document.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    moveDrag(e.clientX, e.clientY);
+  });
+
   document.addEventListener("pointerup", release);
   document.addEventListener("pointercancel", release);
+
+  document.addEventListener("mousedown", (e) => {
+    if (e.pointerType) return;
+    const el = e.target.closest(".sign");
+    if (!el || !canDrag() || e.button !== 0) return;
+    startDrag(el, e.clientX, e.clientY, null);
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    moveDrag(e.clientX, e.clientY);
+  });
+
+  document.addEventListener("mouseup", release);
 })();
 
 /* ---------- Combo: "Make it Burger Fries" → banner scuro + prezzi +5 ---------- */

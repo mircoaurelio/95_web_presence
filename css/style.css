@@ -234,40 +234,53 @@ a { text-decoration: none; color: inherit; }
    FOTO DINER
    ============================================================ */
 .diner {
+  position: relative;
+  z-index: 25;                 /* sopra i francobolli dell'hero che sbordano e rubano i click */
   padding: 24px 24px 40px;
   display: flex;
   justify-content: center;
+  overflow: visible;
 }
 .diner__frame {
   position: relative;
   width: 720px;
   max-width: 100%;
+  overflow: visible;
 }
 .diner__photo {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: auto;
   display: block;
+  pointer-events: none;
 }
-/* plate rosso "Butter Burger Original" (sticker-13) che sborda in alto a sinistra — Figma 95T13 */
-.diner__seal {
+.diner__seal,
+.diner__oval {
   position: absolute;
+  z-index: 5;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+.diner__seal img,
+.diner__oval img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  transform: rotate(var(--rot, 0deg));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .12));
+}
+.diner__seal {
   left: -114px;
   top: -93px;
   width: 179px;
-  height: auto;
-  transform: rotate(-8deg);
-  z-index: 4;
-  pointer-events: auto;
 }
 .diner__oval {
-  position: absolute;
   right: -46px;
   top: 27%;
   width: 147px;
-  height: auto;
-  transform: rotate(-6deg);
-  z-index: 4;
-  pointer-events: auto;
 }
 
 /* ============================================================
