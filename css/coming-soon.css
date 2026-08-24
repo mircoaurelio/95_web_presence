@@ -100,9 +100,29 @@ button { cursor: pointer; }
   line-height: 1.35;
   color: var(--burro);
 }
-.cs-copy a {
+.cs-copy a,
+.cs-ig {
   font-weight: 700;
+  color: var(--sunny-road);
   text-underline-offset: 3px;
+}
+
+.cs-ellipsis {
+  display: inline-flex;
+  width: 1.15em;
+  margin-left: .04em;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+.cs-ellipsis span {
+  opacity: 0;
+  animation: cs-ellipsis 1.35s infinite;
+}
+.cs-ellipsis span:nth-child(2) { animation-delay: .18s; }
+.cs-ellipsis span:nth-child(3) { animation-delay: .36s; }
+@keyframes cs-ellipsis {
+  0%, 100% { opacity: 0; }
+  22%, 78% { opacity: 1; }
 }
 
 .cs-script {
@@ -115,7 +135,14 @@ button { cursor: pointer; }
 }
 
 /* ---- Loading ---- */
-.cs-screen--load { gap: 28px; }
+.cs-screen--load { gap: 22px; }
+.load-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
 .load-dots {
   display: flex;
   gap: 10px;
@@ -128,10 +155,21 @@ button { cursor: pointer; }
   border: 2px solid var(--burro);
   border-radius: 50%;
   background: transparent;
-  transition: background .2s ease;
+  transition: background .16s linear;
 }
 .load-dots span.is-on {
   background: var(--burro);
+}
+.load-dots span.is-partial {
+  background: rgba(255, 249, 233, .42);
+}
+.load-pct {
+  margin: 0;
+  font-family: var(--font-nav);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: .08em;
+  color: var(--burro);
 }
 
 /* ---- Welcome ticket ---- */
@@ -376,4 +414,5 @@ button { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   .cs-btn, .load-dots span { transition: none; }
+  .cs-ellipsis span { animation: none; opacity: 1; }
 }

@@ -94,7 +94,9 @@ a { text-decoration: none; color: inherit; }
   will-change: translate;
 }
 .sticker.is-dragging { cursor: grabbing; z-index: 30; }
-.sticker.is-dragging img {
+.sticker.is-dragging img,
+.sign.is-dragging,
+.sign.is-dragging img {
   animation: none;
   filter: drop-shadow(0 10px 16px rgba(0, 0, 0, .28));
 }
@@ -103,7 +105,11 @@ a { text-decoration: none; color: inherit; }
   50% { translate: 0 -10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sticker img { animation: none; }
+  .sticker img,
+  .diner__seal img,
+  .diner__oval img,
+  .burger-seal,
+  .burger-btn { animation: none; }
 }
 
 /* ============================================================
@@ -271,7 +277,10 @@ a { text-decoration: none; color: inherit; }
   pointer-events: none;
   transform: rotate(var(--rot, 0deg));
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .12));
+  animation: sticker-float 3.6s ease-in-out infinite;
+  will-change: translate;
 }
+.diner__oval img { animation-delay: .45s; }
 .diner__seal {
   left: -114px;
   top: -93px;
@@ -580,6 +589,14 @@ a { text-decoration: none; color: inherit; }
   line-height: 1;
   color: var(--sunny-road);
 }
+.receipt__details,
+.receipt__details-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
 
 /* ---- Lato destro: bottone + bolli + burger ---- */
 .burger-btn-slot {
@@ -596,9 +613,18 @@ a { text-decoration: none; color: inherit; }
   cursor: pointer;
   transform-origin: center;
   transition: transform .25s ease;
+  animation: sticker-float 4.1s ease-in-out infinite;
+  will-change: translate;
 }
 .burger-btn:hover { transform: scale(1.08); }
-.burger-btn img { width: 100%; height: auto; grid-area: 1 / 1; }
+.burger-btn img {
+  width: 100%;
+  height: auto;
+  grid-area: 1 / 1;
+  object-fit: contain;
+}
+.burger-btn--counter img { aspect-ratio: 374.4 / 100.8; }
+.burger-btn--order img { aspect-ratio: 318.4 / 100.8; }
 .burger-btn__text {
   grid-area: 1 / 1;
   display: flex;
@@ -624,11 +650,15 @@ a { text-decoration: none; color: inherit; }
   left: 762px;                 /* Figma 134:351: centro bollo (882,409), 240px, -15° */
   top: 289px;
   width: 240px;
-  height: auto;
+  height: 240px;
+  object-fit: contain;
   transform: rotate(-15deg);
   z-index: 5;
   pointer-events: auto;
   cursor: grab;
+  animation: sticker-float 3.8s ease-in-out infinite;
+  animation-delay: .2s;
+  will-change: translate;
 }
 .burger-seal[hidden] { display: none; }
 .burger-figure {
@@ -1074,6 +1104,7 @@ body.has-receipt-modal { overflow: hidden; }
   transform: none;
   box-shadow: 0 12px 32px rgba(0, 0, 0, .35);
 }
+.receipt__more { display: none; }
 .receipt-modal .receipt__addr,
 .receipt-modal .receipt__foot,
 .receipt-modal .receipt__note,
@@ -1225,8 +1256,8 @@ body.has-receipt-modal { overflow: hidden; }
   .marquee::after  { bottom: 5px; }
   .marquee__group { font-size: 22px; }
 
-  /* ---- Burger showcase: layout mobile a tutto schermo ----
-     Panino + titolo + info al centro. Lo scontrino si apre a pop-up. */
+  /* ---- Burger showcase: scontrino in alto, espandibile al click ----
+     Il panino e la targa restano fissi; lo scontrino si allunga sopra. */
   .burger-stage {
     position: relative;
     left: auto;
@@ -1234,73 +1265,115 @@ body.has-receipt-modal { overflow: hidden; }
     transform: none !important;
     width: 100%;
     height: 100%;
+    display: block;
+    padding: 0;
+  }
+  .receipt-stack {
+    display: block;
+    position: absolute;
+    top: 76px;
+    left: 50%;
+    width: min(340px, calc(100% - 28px));
+    height: auto;
+    transform: translateX(-50%);
+    z-index: 8;
+  }
+  .receipt {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    padding: 22px 18px 16px;
+    gap: 10px;
+    display: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none !important;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .receipt.is-shown {
+    display: flex;
+  }
+  .receipt__wordmark { width: 132px; height: 26px; }
+  .receipt__title { font-size: 32px; }
+  .receipt__addr,
+  .receipt__order,
+  .receipt__note,
+  .receipt__foot { display: none; }
+  .receipt__details {
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height .4s cubic-bezier(.2, .8, .2, 1), opacity .28s ease;
+  }
+  .receipt__details > .receipt__details-inner {
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 72px 16px 28px;
+    gap: 10px;
+    padding-bottom: 4px;
   }
-  .burger-seal {
-    position: static;
-    order: 1;
-    width: 110px;
-    transform: rotate(-8deg);
+  .receipt.is-open .receipt__details {
+    max-height: 520px;
+    opacity: 1;
+    pointer-events: auto;
   }
-  .burger-figure {
-    position: relative;
-    order: 2;
-    right: auto;
-    bottom: auto;
-    width: min(280px, 72vw);
-    height: min(280px, 72vw);
-  }
-  .burger-info {
-    display: grid;
-    place-items: center;
-    position: absolute;
-    top: 6%;
-    right: 2%;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border: 2px solid var(--black);
-    border-radius: 50%;
-    background: var(--burro);
-    color: var(--black);
-    font-family: var(--font-nav);
-    font-weight: 700;
-    font-size: 18px;
-    font-style: italic;
-    line-height: 1;
-    cursor: pointer;
-    z-index: 8;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .18);
-  }
-  .burger-mobile-title {
+  .receipt__list { font-size: 13px; gap: 7px; }
+  .receipt__total { font-size: 26px; }
+  .receipt__tag { font-size: 26px; }
+  .receipt__more {
     display: block;
-    order: 3;
-    margin: 0;
+    margin: 2px 0 0;
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 700;
-    font-size: 28px;
-    line-height: 1;
+    font-size: 15px;
+    line-height: 1.2;
     text-align: center;
-    color: var(--burro);
-    text-shadow: 0 1px 8px rgba(0, 0, 0, .25);
+    color: var(--sunny-road);
   }
-  .burger-showcase--butter .burger-mobile-title,
-  .burger-showcase--cheese .burger-mobile-title { color: var(--black); }
+  .receipt.is-open .receipt__more { display: none; }
+
+  .burger-seal {
+    position: absolute;
+    left: 6%;
+    top: auto;
+    bottom: 38%;
+    width: 108px;
+    height: 108px;
+    transform: rotate(-8deg);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .burger-figure {
+    position: absolute;
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: 118px;
+    width: min(280px, 72vw);
+    height: min(280px, 72vw);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .burger-info,
+  .burger-mobile-title { display: none !important; }
   .burger-btn-slot {
-    position: static;
-    order: 4;
-    width: min(240px, 72%);
+    position: absolute;
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: 22px;
+    width: min(260px, 78%);
+    transform: translateX(-50%);
+    z-index: 5;
   }
   .burger-btn__text { font-size: 24px; }
   .burger-btn__text small { font-size: 12px; }
-
-  .receipt-stack { display: none; }
 
   /* ---- Fries / drinks ---- */
   .fries-drinks { padding: 32px 16px; }

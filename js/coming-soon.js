@@ -17,6 +17,8 @@
   if (!screens.load || !screens.welcome || !screens.player || !screens.join) return;
 
   const dots = [...document.querySelectorAll(".load-dots span")];
+  const pctEl = document.querySelector("[data-load-pct]");
+  const barEl = document.querySelector("[data-load-bar]");
   const form = document.getElementById("playerForm");
   const errorEl = document.getElementById("formError");
   const startBtn = document.querySelector("[data-start-game]");
@@ -64,25 +66,60 @@
     return "";
   }
 
+  function setProgress(value) {
+    const pct = Math.max(0, Math.min(100, value));
+    const shown = Math.round(pct);
+    if (pctEl) pctEl.textContent = shown + "%";
+    if (barEl) barEl.setAttribute("aria-valuenow", String(shown));
+    if (!dots.length) return;
+    const n = dots.length;
+    dots.forEach((dot, i) => {
+      const start = (i / n) * 100;
+      const end = ((i + 1) / n) * 100;
+      dot.classList.toggle("is-on", pct >= end - 0.05);
+      dot.classList.toggle("is-partial", pct > start && pct < end - 0.05);
+    });
+  }
+
+  function animateProgress(from, to, duration) {
+    return new Promise((resolve) => {
+      if (duration <= 0) {
+        setProgress(to);
+        resolve();
+        return;
+      }
+      const start = performance.now();
+      const tick = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - (1 - t) * (1 - t);
+        setProgress(from + (to - from) * eased);
+        if (t < 1) requestAnimationFrame(tick);
+        else resolve();
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   function runLoading() {
     show("load");
+    setProgress(0);
     if (reduceMotion || !dots.length) {
+      setProgress(100);
       show("welcome");
       return;
     }
-    dots.forEach((dot) => dot.classList.remove("is-on"));
-    let i = 0;
-    const target = Math.max(0, dots.length - 1);
-    const tick = () => {
-      if (i < target) {
-        dots[i].classList.add("is-on");
-        i += 1;
-        setTimeout(tick, 110);
-        return;
-      }
-      setTimeout(() => show("welcome"), 420);
-    };
-    setTimeout(tick, 180);
+    (async () => {
+      await wait(160);
+      await animateProgress(0, 95, 1500);
+      await wait(1200);
+      await animateProgress(95, 100, 280);
+      await wait(260);
+      show("welcome");
+    })();
   }
 
   const savedScreen = sessionStorage.getItem(KEY_SCREEN);

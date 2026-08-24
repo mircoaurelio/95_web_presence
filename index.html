@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600;1,9..144,700;1,9..144,900&family=Jost:wght@400;500;700&family=Raleway:wght@400;500;700&family=Yellowtail&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/coming-soon.css?v=2" />
+  <link rel="stylesheet" href="css/coming-soon.css?v=3" />
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
@@ -32,11 +32,14 @@
 
     <main class="cs-main">
       <section class="cs-screen cs-screen--load is-on" data-screen="load" aria-label="Loading">
-        <p class="cs-script">Loading...</p>
-        <div class="load-dots" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span>
+        <p class="cs-script">Loading<span class="cs-ellipsis" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></p>
+        <div class="load-bar" data-load-bar role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading">
+          <div class="load-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span>
+          </div>
+          <p class="load-pct" data-load-pct>0%</p>
         </div>
       </section>
 
@@ -85,7 +88,7 @@
       <section class="cs-screen" data-screen="join" aria-labelledby="joinTitle">
         <h1 class="cs-title" id="joinTitle">Join 95</h1>
         <p class="cs-kicker">Mission 02</p>
-        <p class="cs-copy">Segui <a data-ig-follow href="https://www.instagram.com/ninetyfiveburgers/" target="_blank" rel="noopener">@ninetyfiveburgers</a> su Instagram per completare la registrazione.</p>
+        <p class="cs-copy">Segui <a class="cs-ig" data-ig-follow href="https://www.instagram.com/ninetyfiveburgers/" target="_blank" rel="noopener">@ninetyfiveburgers</a> su Instagram per completare la registrazione.</p>
         <div class="cs-box">
           <p class="cs-script">Warning!</p>
           <p>Per sbloccare il pass devi completare entrambe le missioni</p>
@@ -114,6 +117,6 @@
     </footer>
   </div>
 
-  <script src="js/coming-soon.js?v=2"></script>
+  <script src="js/coming-soon.js?v=3"></script>
 </body>
 </html>

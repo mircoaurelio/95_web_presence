@@ -205,14 +205,19 @@ const ASSETS = document.body?.dataset.assets || "assets/";
         <p class="receipt__addr">Via Sant'Agnese, 14<br />20123 Milano</p>
         <h3 class="receipt__title">${b.title}</h3>
         <div class="receipt__stars">${STARS}</div>
-        <dl class="receipt__list">${items}</dl>
-        <div class="receipt__stars">${STARS}</div>
-        <div class="receipt__total"><span>TOTAL</span><span class="receipt__price">${b.total}<span class="cents">.95</span></span></div>
-        <div class="receipt__stars">${STARS}</div>
-        <p class="receipt__order">${b.order}</p>
-        ${b.note ? `<p class="receipt__note">${b.note}</p>` : ""}
-        <div class="receipt__foot">${foot}<p class="receipt__foot-bold">09/05/95 — 9:50 PM</p></div>
-        <p class="receipt__tag">${b.tag}</p>
+        <p class="receipt__more">Click for More</p>
+        <div class="receipt__details">
+          <div class="receipt__details-inner">
+            <dl class="receipt__list">${items}</dl>
+            <div class="receipt__stars">${STARS}</div>
+            <div class="receipt__total"><span>TOTAL</span><span class="receipt__price">${b.total}<span class="cents">.95</span></span></div>
+            <div class="receipt__stars">${STARS}</div>
+            <p class="receipt__order">${b.order}</p>
+            ${b.note ? `<p class="receipt__note">${b.note}</p>` : ""}
+            <div class="receipt__foot">${foot}<p class="receipt__foot-bold">09/05/95 — 9:50 PM</p></div>
+            <p class="receipt__tag">${b.tag}</p>
+          </div>
+        </div>
       </article>`;
   }
 
@@ -257,11 +262,23 @@ const ASSETS = document.body?.dataset.assets || "assets/";
 
   seal.addEventListener("error", () => { seal.hidden = true; });
 
+  function isMobile() {
+    return window.matchMedia("(max-width: 767px)").matches;
+  }
+
   function setState(i) {
     state = ((i % BURGERS.length) + BURGERS.length) % BURGERS.length;
     const b = BURGERS[state];
+    const mobile = isMobile();
     showcase.className = "burger-showcase burger-showcase--" + b.key;
-    receipts.forEach((r, j) => r.classList.toggle("is-shown", j <= state));
+    receipts.forEach((r, j) => {
+      const on = mobile ? j === state : j <= state;
+      r.classList.toggle("is-shown", on);
+      if (!on || !mobile) r.classList.remove("is-open");
+      if (mobile) r.setAttribute("tabindex", "0");
+      else r.removeAttribute("tabindex");
+      r.setAttribute("aria-expanded", r.classList.contains("is-open") ? "true" : "false");
+    });
     if (b.seal) { seal.hidden = false; seal.src = b.seal; } else { seal.hidden = true; }
     slot.innerHTML = buttonHTML(b);
     if (mobileTitle) mobileTitle.textContent = b.title;
@@ -304,12 +321,15 @@ const ASSETS = document.body?.dataset.assets || "assets/";
 
   function fitStage() {
     const stage = root.querySelector(".burger-stage");
-    if (!stage || window.matchMedia("(max-width: 767px)").matches) {
+    if (!stage || isMobile()) {
       if (stage) stage.style.transform = "";
       return;
     }
-    const scale = Math.min(showcase.clientWidth / 1512, showcase.clientHeight / 982);
-    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    const nav = document.querySelector(".nav");
+    const topSafe = Math.max(0, (nav ? nav.getBoundingClientRect().bottom : 0) + 10);
+    const availH = Math.max(240, showcase.clientHeight - topSafe);
+    const scale = Math.min(showcase.clientWidth / 1512, availH / 982);
+    stage.style.transform = `translate(-50%, calc(-50% + ${topSafe / 2}px)) scale(${scale})`;
   }
 
   function onScroll() {
@@ -322,7 +342,21 @@ const ASSETS = document.body?.dataset.assets || "assets/";
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", () => {
     fitStage();
+    setState(state);
     onScroll();
+  });
+
+  receipts.forEach((r) => {
+    r.addEventListener("click", () => {
+      if (!isMobile() || !r.classList.contains("is-shown")) return;
+      r.classList.toggle("is-open");
+      r.setAttribute("aria-expanded", r.classList.contains("is-open") ? "true" : "false");
+    });
+    r.addEventListener("keydown", (e) => {
+      if (!isMobile() || (e.key !== "Enter" && e.key !== " ")) return;
+      e.preventDefault();
+      r.click();
+    });
   });
 
   function openReceipt() {
