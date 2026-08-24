@@ -3,3 +3,6 @@
 
 # Config locale di Claude Code / dev server (non serve online)
 .claude/
+
+# Riferimenti locali (PDF convertiti)
+_ref_pdfs/

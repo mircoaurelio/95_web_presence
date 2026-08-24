@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ninetyfive — Game saved</title>
+  <meta name="description" content="Registrazione completata. Se hai finito entrambe le missioni, riceverai il ticket nella tua inbox." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <script>
+    window.__nfOpeningComplete = sessionStorage.getItem("nf-opening-complete") === "1";
+    if (!window.__nfOpeningComplete) {
+      location.replace("../");
+    }
+  </script>
+
+  <!-- Google Tag Manager -->
+  <script>
+  if (window.__nfOpeningComplete) {
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PRDCG4H8');
+  }
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600;1,9..144,700;1,9..144,900&family=Jost:wght@400;500;700&family=Raleway:wght@400;500;700&family=Yellowtail&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/coming-soon.css?v=2" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=../" />
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div class="cs-page">
+    <a class="cs-logo" href="../" aria-label="Ninetyfive">
+      <img src="../assets/logo-95-orange.svg" alt="95" width="72" height="37" />
+    </a>
+
+    <main class="cs-main">
+      <section class="cs-screen is-on" aria-labelledby="thanksTitle">
+        <h1 class="cs-title" id="thanksTitle">Game saved</h1>
+        <p class="cs-kicker">See you in 1995</p>
+        <p class="cs-copy">Se hai completato entrambe le missioni, riceverai presto, nella tua inbox, il tuo ticket per tornare nel 1995.</p>
+        <div class="cs-box">
+          <p class="cs-script">Pending...</p>
+          <p>Player registered, Instagram check...</p>
+        </div>
+        <a class="cs-replay" href="../" data-new-game>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 12a8 8 0 0 1 13.66-5.66L20 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 4v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 12a8 8 0 0 1-13.66 5.66L4 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 20v-4h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Start a new game
+        </a>
+      </section>
+    </main>
+
+    <footer class="cs-footer">
+      <div class="cs-footer__col cs-footer__col--left">
+        <p class="cs-footer__line">P.I. 14565640969 - <a href="mailto:ninetyfive@pec.it">ninetyfive@pec.it</a></p>
+        <p class="cs-footer__line">Via Abbondio Sangiorgio, 18 - 20145 - Milano (MI)</p>
+      </div>
+      <div class="cs-footer__col cs-footer__col--center">
+        <div class="cs-social">
+          <a href="#" aria-label="Facebook"><img src="../assets/social-facebook.svg" alt="" width="24" height="24" /></a>
+          <a href="https://www.instagram.com/ninetyfiveburgers/" target="_blank" rel="noopener" aria-label="Instagram"><img src="../assets/social-instagram.svg" alt="" width="24" height="24" /></a>
+          <a href="#" aria-label="TikTok"><img src="../assets/social-tiktok.svg" alt="" width="24" height="24" /></a>
+          <a href="#" aria-label="Spotify"><img src="../assets/social-spotify.svg" alt="" width="24" height="24" /></a>
+        </div>
+      </div>
+      <div class="cs-footer__col cs-footer__col--right">
+        <p class="cs-footer__line"><a href="#">Cookie Policy</a> - <a href="#">Privacy Policy</a></p>
+        <p class="cs-footer__line">© 2026, Ninetyfive - Ninetyfive S.r.l.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelector("[data-new-game]")?.addEventListener("click", function () {
+      sessionStorage.removeItem("nf-opening-complete");
+      sessionStorage.removeItem("nf-opening-player");
+      sessionStorage.removeItem("nf-opening-screen");
+      sessionStorage.removeItem("nf-opening-ig-clicked");
+    });
+  </script>
+</body>
+</html>

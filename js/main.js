@@ -2,6 +2,8 @@
    NINETYFIVE — script del sito
    ============================================================ */
 
+const ASSETS = document.body?.dataset.assets || "assets/";
+
 /* ---------- Hero: macchina da scrivere sotto "House of" ---------- */
 (function heroTypewriter() {
   const el = document.querySelector(".hero__rotator");
@@ -169,23 +171,23 @@
 
   const ANGLES = 5;
   const BURGERS = [
-    { key: "butter", title: "Butter Burger", seal: "assets/seal-butter-burger.svg",
-      photos: ["assets/burger-butter.png", "assets/burger-butter-2.png", "assets/burger-butter-3.png", "assets/burger-butter-4.png", "assets/burger-butter-5.png"],
+    { key: "butter", title: "Butter Burger", seal: ASSETS + "seal-butter-burger.svg",
+      photos: [ASSETS + "burger-butter.png", ASSETS + "burger-butter-2.png", ASSETS + "burger-butter-3.png", ASSETS + "burger-butter-4.png", ASSETS + "burger-butter-5.png"],
       btn: "counter", total: "10", order: "ORDER #BB095", note: "NO DELIVERY - COUNTER ONLY",
       items: [["DOUBLE PATTY", "Fresh prime ground beef"], ["CHEESE", "Double white cheddar"], ["ONIONS", "Butter-grilled onions"], ["PICKLES", "Included"], ["BUN", "Potato Bun"], ["BUTTER", "Soft butter"]],
       foot: ["Counter Order", "Plate + napkin + wipe"], tag: "Butter is better!", rot: "2deg", dx: "0px", dy: "0px" },
-    { key: "bacon", title: "Bacon Burger", seal: "assets/seal-bacon.svg",
-      photos: ["assets/burger-bacon.png", "assets/burger-bacon-2.png", "assets/burger-bacon-3.png", "assets/burger-bacon-4.png", "assets/burger-bacon-5.png"],
+    { key: "bacon", title: "Bacon Burger", seal: ASSETS + "seal-bacon.svg",
+      photos: [ASSETS + "burger-bacon.png", ASSETS + "burger-bacon-2.png", ASSETS + "burger-bacon-3.png", ASSETS + "burger-bacon-4.png", ASSETS + "burger-bacon-5.png"],
       btn: "order", total: "11", order: "ORDER #BA095", note: null,
       items: [["DOUBLE PATTY", "Fresh prime ground beef"], ["CHEESE", "Double American cheese"], ["BACON", "Honey crispy bacon"], ["ONIONS", "Butter-grilled onions"], ["PICKLES", "Included"], ["BUN", "Potato Bun"], ["SAUCE", "Mustard 95 sauce"]],
       foot: ["Counter Order", "Wrapped in foil, napkin + wipe included"], tag: "Crispy business", rot: "-5deg", dx: "-24px", dy: "14px" },
-    { key: "cheese", title: "Cheese Burger", seal: "assets/seal-cheese.svg",
-      photos: ["assets/burger-cheese.png", "assets/burger-cheese-2.png", "assets/burger-cheese-3.png", "assets/burger-cheese-4.png", "assets/burger-cheese-5.png"],
+    { key: "cheese", title: "Cheese Burger", seal: ASSETS + "seal-cheese.svg",
+      photos: [ASSETS + "burger-cheese.png", ASSETS + "burger-cheese-2.png", ASSETS + "burger-cheese-3.png", ASSETS + "burger-cheese-4.png", ASSETS + "burger-cheese-5.png"],
       btn: "order", total: "9", order: "ORDER #BC095", note: null,
       items: [["DOUBLE PATTY", "Fresh prime ground beef"], ["CHEESE", "Double American cheese"], ["ONIONS", "Butter-grilled onions"], ["PICKLES", "Included"], ["BUN", "Potato Bun"], ["SAUCE", "95 sauce"]],
       foot: ["Counter Order", "Wrapped in foil, napkin + wipe included"], tag: "Say cheese!", rot: "6deg", dx: "22px", dy: "-8px" },
-    { key: "fries", title: "Burger Fries", seal: "assets/seal-fries.svg",
-      photos: ["assets/burger-fries.png", "assets/burger-fries-2.png", "assets/burger-fries-3.png", "assets/burger-fries-4.png", "assets/burger-fries-5.png"],
+    { key: "fries", title: "Burger Fries", seal: ASSETS + "seal-fries.svg",
+      photos: [ASSETS + "burger-fries.png", ASSETS + "burger-fries-2.png", ASSETS + "burger-fries-3.png", ASSETS + "burger-fries-4.png", ASSETS + "burger-fries-5.png"],
       btn: "order", total: "9", order: "ORDER #BF095", note: null,
       items: [["FRIES", "Classic fries*"], ["PATTY", "Fresh prime ground beef"], ["CHEESE", "American cheese"], ["ONIONS", "Butter-grilled onions"], ["SAUCE", "95 sauce"]],
       foot: ["Counter Order", "Pulp tray, fork included", "*Our fries are frozen at origin"], tag: "Fries with benefits", rot: "-4deg", dx: "-16px", dy: "22px" },
@@ -199,7 +201,7 @@
     const foot = b.foot.map((l) => `<p>${l}</p>`).join("");
     return `
       <article class="receipt" data-i="${i}" style="--rot:${b.rot};--dx:${b.dx};--dy:${b.dy};z-index:${i + 1};">
-        <img class="receipt__wordmark" src="assets/receipt-wordmark.svg" alt="Ninety-five" />
+        <img class="receipt__wordmark" src="${ASSETS}receipt-wordmark.svg" alt="Ninety-five" />
         <p class="receipt__addr">Via Sant'Agnese, 14<br />20123 Milano</p>
         <h3 class="receipt__title">${b.title}</h3>
         <div class="receipt__stars">${STARS}</div>
@@ -217,12 +219,12 @@
   function buttonHTML(b) {
     if (b.btn === "counter") {
       return `<div class="burger-btn burger-btn--counter">
-        <img src="assets/counter-only.svg" alt="" aria-hidden="true" />
+        <img src="${ASSETS}counter-only.svg" alt="" aria-hidden="true" />
         <span class="burger-btn__text">Counter only<small>No delivery</small></span>
       </div>`;
     }
     return `<div class="burger-btn burger-btn--order">
-      <img src="assets/order-now.svg" alt="" aria-hidden="true" />
+      <img src="${ASSETS}order-now.svg" alt="" aria-hidden="true" />
       <span class="burger-btn__text burger-btn__text--order">Order now</span>
     </div>`;
   }
