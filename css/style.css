@@ -21,14 +21,18 @@
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  background: var(--burro);
+  overflow-x: hidden;          /* clip laterale sul viewport, senza creare un secondo scroll su body */
+}
 body {
   margin: 0;
   background: var(--burro);
   color: var(--black);
   font-family: var(--font-nav);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;          /* i francobolli possono sbordare ai lati senza barre di scorrimento */
 }
 img { display: block; max-width: 100%; }
 a { text-decoration: none; color: inherit; }
@@ -407,13 +411,14 @@ a { text-decoration: none; color: inherit; }
    Finita la rotazione del blocco nero, lo scroll normale riprende.
    ============================================================ */
 .burger-pin {
-  height: calc(100vh * (1 + 4 * 5 * 0.4)); /* 1 sticky + 5 angle frames per burger */
+  /* stessa unità del palco sticky: su Chrome Android 100vh e 100dvh non coincidono
+     (barra URL), e la differenza per 9 schermate diventa una fascia vuota in fondo. */
+  height: calc(var(--stage-h, 100vh) * (1 + 4 * 5 * 0.4));
 }
 .burger-showcase {
   position: sticky;
   top: 0;
-  height: 100vh;
-  height: 100dvh;
+  height: var(--stage-h, 100vh);
   overflow: hidden;
   border-top: 2px solid var(--black);
   transition: background-color .5s ease;

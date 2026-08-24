@@ -19,7 +19,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600;1,9..144,700;1,9..144,900&family=Jost:wght@400;500;700&family=Raleway:wght@400;500;700&family=Yellowtail&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="../css/style.css?v=43" />
+  <link rel="stylesheet" href="../css/style.css?v=44" />
+  <script>
+    (function lockStageHeight() {
+      function set() {
+        document.documentElement.style.setProperty("--stage-h", window.innerHeight + "px");
+      }
+      var lastW = window.innerWidth;
+      set();
+      window.addEventListener("resize", function () {
+        if (window.matchMedia("(min-width: 768px)").matches || window.innerWidth !== lastW) {
+          lastW = window.innerWidth;
+          set();
+        }
+      });
+      window.addEventListener("orientationchange", function () { setTimeout(set, 300); });
+    })();
+  </script>
 </head>
 <body data-assets="../assets/">
   <!-- Google Tag Manager (noscript) -->
@@ -255,6 +271,6 @@
     </div>
   </div>
 
-  <script src="../js/main.js?v=17"></script>
+  <script src="../js/main.js?v=18"></script>
 </body>
 </html>
