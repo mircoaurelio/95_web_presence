@@ -356,6 +356,18 @@ button { cursor: pointer; }
 }
 .cs-replay:hover { color: var(--butter); }
 
+.cs-site-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  color: var(--butter);
+  font-weight: 700;
+  text-align: center;
+  text-underline-offset: 4px;
+}
+.cs-site-link:hover { color: var(--burro); }
+
 /* ---- Footer ---- */
 .cs-footer {
   width: 100%;

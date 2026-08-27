@@ -411,9 +411,16 @@ a { text-decoration: none; color: inherit; }
    Finita la rotazione del blocco nero, lo scroll normale riprende.
    ============================================================ */
 .burger-pin {
-  /* stessa unità del palco sticky: su Chrome Android 100vh e 100dvh non coincidono
-     (barra URL), e la differenza per 9 schermate diventa una fascia vuota in fondo. */
-  height: calc(var(--stage-h, 100vh) * (1 + 4 * 5 * 0.4));
+  --stage-h: 100vh;
+  --scroll-span: 800vh;
+  height: calc(var(--stage-h) + var(--scroll-span));
+}
+@supports (height: 100dvh) {
+  .burger-pin {
+    /* Il palco segue la barra del browser; la distanza di rotazione resta stabile. */
+    --stage-h: 100dvh;
+    --scroll-span: 800svh;
+  }
 }
 .burger-showcase {
   position: sticky;
@@ -1065,6 +1072,13 @@ a { text-decoration: none; color: inherit; }
   transition: background .2s ease, color .2s ease;
 }
 .footer__btn:hover { background: var(--butter); color: var(--black); }
+.footer__opening {
+  min-height: 44px;
+  padding: 10px;
+  color: var(--butter);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
 body.has-receipt-modal { overflow: hidden; }
 
@@ -1203,6 +1217,9 @@ body.has-receipt-modal { overflow: hidden; }
    ============================================================ */
 @media (max-width: 767px) {
 
+  /* I segni non sono draggabili su telefono: uno swipe deve scorrere la pagina. */
+  .sign, .sticker { touch-action: auto; }
+
   /* ---- Header / nav ---- */
   .site-header { padding: 12px 12px 0; }
   .nav__item {
@@ -1263,6 +1280,10 @@ body.has-receipt-modal { overflow: hidden; }
 
   /* ---- Burger showcase: scontrino in alto, espandibile al click ----
      Il panino e la targa restano fissi; lo scontrino si allunga sopra. */
+  .burger-pin { --scroll-span: 400vh; }
+  @supports (height: 100svh) {
+    .burger-pin { --scroll-span: 400svh; }
+  }
   .burger-stage {
     position: relative;
     left: auto;
@@ -1299,6 +1320,10 @@ body.has-receipt-modal { overflow: hidden; }
   }
   .receipt.is-shown {
     display: flex;
+  }
+  .receipt.is-open {
+    max-height: calc(var(--stage-h) - 100px);
+    overflow-y: auto;
   }
   .receipt__wordmark { width: 132px; height: 26px; }
   .receipt__title { font-size: 32px; }
@@ -1355,13 +1380,14 @@ body.has-receipt-modal { overflow: hidden; }
     pointer-events: none;
   }
   .burger-figure {
+    --burger-size: min(280px, 72vw, max(120px, calc(var(--stage-h) - 382px)));
     position: absolute;
     right: auto;
     left: 50%;
     top: auto;
     bottom: 118px;
-    width: min(280px, 72vw);
-    height: min(280px, 72vw);
+    width: var(--burger-size);
+    height: var(--burger-size);
     transform: translateX(-50%);
     z-index: 2;
   }
@@ -1448,6 +1474,34 @@ body.has-receipt-modal { overflow: hidden; }
   .footer__line { font-size: 14px; }
   .footer__logo { height: 76px; }
   .footer__btn { padding: 12px 56px; font-size: 13px; }
+}
+
+/* ---- Telefoni in orizzontale: scontrino e burger affiancati ---- */
+@media (max-width: 767px) and (max-height: 500px) {
+  .receipt-stack {
+    left: 4%;
+    width: 44%;
+    transform: none;
+  }
+  .receipt__title { font-size: 26px; }
+  .burger-figure {
+    --burger-size: min(240px, 42vw, calc(var(--stage-h) - 166px));
+    left: 75%;
+    bottom: 86px;
+  }
+  .burger-seal {
+    left: 52%;
+    top: 80px;
+    bottom: auto;
+    width: 64px;
+    height: 64px;
+  }
+  .burger-btn-slot {
+    left: 75%;
+    bottom: 16px;
+    width: min(240px, 40%);
+  }
+  .burger-btn__text { font-size: 20px; }
 }
 
 /* ---------- ≤380px — telefoni piccoli ---------- */

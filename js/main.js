@@ -259,6 +259,8 @@ const ASSETS = document.body?.dataset.assets || "assets/";
   const infoBtn = root.querySelector(".burger-info");
   const mobileTitle = root.querySelector(".burger-mobile-title");
   let state = 0;
+  let lastFrame = -1;
+  let scrollFrame = 0;
 
   seal.addEventListener("error", () => { seal.hidden = true; });
 
@@ -305,14 +307,12 @@ const ASSETS = document.body?.dataset.assets || "assets/";
 
   function applyProgress(progress) {
     const n = BURGERS.length;
-    if (reduceMotion) {
-      const index = clamp(Math.round(progress * (n - 1)), 0, n - 1);
-      if (index !== state) setState(index);
-      showAngle(index, 0);
-      return;
-    }
     const total = n * ANGLES;
-    const frame = clamp(Math.min(total - 1, Math.floor(progress * total)), 0, total - 1);
+    const frame = reduceMotion
+      ? clamp(Math.round(progress * (n - 1)), 0, n - 1) * ANGLES
+      : clamp(Math.floor(progress * total), 0, total - 1);
+    if (frame === lastFrame) return;
+    lastFrame = frame;
     const index = Math.floor(frame / ANGLES);
     const angle = frame % ANGLES;
     if (index !== state) setState(index);
@@ -333,7 +333,11 @@ const ASSETS = document.body?.dataset.assets || "assets/";
   }
 
   function onScroll() {
-    applyProgress(pinProgress());
+    if (scrollFrame) return;
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = 0;
+      applyProgress(pinProgress());
+    });
   }
 
   setState(0);
