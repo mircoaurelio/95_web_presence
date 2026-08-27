@@ -1321,6 +1321,7 @@ body.has-receipt-modal { overflow: hidden; }
   .receipt.is-shown {
     display: flex;
   }
+  .receipt > * { flex-shrink: 0; }
   .receipt.is-open {
     max-height: calc(var(--stage-h) - 100px);
     overflow-y: auto;
