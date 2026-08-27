@@ -205,7 +205,7 @@ const ASSETS = document.body?.dataset.assets || "assets/";
         <p class="receipt__addr">Via Sant'Agnese, 14<br />20123 Milano</p>
         <h3 class="receipt__title">${b.title}</h3>
         <div class="receipt__stars">${STARS}</div>
-        <p class="receipt__more">Click for More</p>
+        <p class="receipt__more">Tap for ingredients</p>
         <div class="receipt__details">
           <div class="receipt__details-inner">
             <dl class="receipt__list">${items}</dl>
@@ -223,15 +223,15 @@ const ASSETS = document.body?.dataset.assets || "assets/";
 
   function buttonHTML(b) {
     if (b.btn === "counter") {
-      return `<div class="burger-btn burger-btn--counter">
+      return `<a class="burger-btn burger-btn--counter" href="#contacts" aria-label="Counter only — find us in Milan">
         <img src="${ASSETS}counter-only.svg" alt="" aria-hidden="true" />
         <span class="burger-btn__text">Counter only<small>No delivery</small></span>
-      </div>`;
+      </a>`;
     }
-    return `<div class="burger-btn burger-btn--order">
+    return `<a class="burger-btn burger-btn--order" href="#contacts" aria-label="Order now at the counter — find us in Milan">
       <img src="${ASSETS}order-now.svg" alt="" aria-hidden="true" />
-      <span class="burger-btn__text burger-btn__text--order">Order now</span>
-    </div>`;
+      <span class="burger-btn__text burger-btn__text--order">Order now<small>At the counter</small></span>
+    </a>`;
   }
 
   const photosHTML = BURGERS.flatMap((b, bi) =>
@@ -250,6 +250,10 @@ const ASSETS = document.body?.dataset.assets || "assets/";
         <button type="button" class="burger-info" aria-label="View ingredients">i</button>
       </div>
       <p class="burger-mobile-title" aria-live="polite"></p>
+      <div class="burger-mobile-footer">
+        <p class="burger-mobile-price" role="status" aria-live="polite" aria-atomic="true"></p>
+        <a class="burger-menu-next" href="#friesDrinks">Fries, drinks, done <span aria-hidden="true">↓</span></a>
+      </div>
     </div>`;
 
   const receipts = [...root.querySelectorAll(".receipt")];
@@ -258,6 +262,7 @@ const ASSETS = document.body?.dataset.assets || "assets/";
   const slot = root.querySelector(".burger-btn-slot");
   const infoBtn = root.querySelector(".burger-info");
   const mobileTitle = root.querySelector(".burger-mobile-title");
+  const mobilePrice = root.querySelector(".burger-mobile-price");
   let state = 0;
   let lastFrame = -1;
   let scrollFrame = 0;
@@ -269,7 +274,9 @@ const ASSETS = document.body?.dataset.assets || "assets/";
   }
 
   function setState(i) {
-    state = ((i % BURGERS.length) + BURGERS.length) % BURGERS.length;
+    const nextState = ((i % BURGERS.length) + BURGERS.length) % BURGERS.length;
+    const changed = nextState !== state;
+    state = nextState;
     const b = BURGERS[state];
     const mobile = isMobile();
     showcase.className = "burger-showcase burger-showcase--" + b.key;
@@ -284,6 +291,11 @@ const ASSETS = document.body?.dataset.assets || "assets/";
     if (b.seal) { seal.hidden = false; seal.src = b.seal; } else { seal.hidden = true; }
     slot.innerHTML = buttonHTML(b);
     if (mobileTitle) mobileTitle.textContent = b.title;
+    if (mobilePrice && (changed || !mobilePrice.childElementCount)) {
+      mobilePrice.setAttribute("aria-label", `${b.title}: ${b.total}.95 euros`);
+      mobilePrice.innerHTML = `<span class="burger-mobile-price__label">TOTAL</span>
+        <span class="burger-mobile-price__value">€${b.total}<span class="cents">.95</span></span>`;
+    }
   }
 
   function clamp(n, min, max) {
